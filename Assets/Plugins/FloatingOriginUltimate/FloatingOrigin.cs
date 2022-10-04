@@ -32,6 +32,11 @@ namespace twoloop
         /// </summary>
         public Transform focus;
 
+        /// <summary>
+        /// Used to move objects with different scales depending on their layer
+        /// </summary>
+        public System.Collections.Generic.Dictionary<int, float> layerIDToScalingDict = new();
+
 #if MIRROR_43_0_OR_NEWER
         public NetworkFOU networkFou;
 
@@ -549,7 +554,19 @@ namespace twoloop
             var rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
             foreach (var item in rootGameObjects)
             {
-                item.transform.position -= _focusPosition;
+                // Cameras are always near the world origin and don't need to be shifted
+                if (!item.GetComponent<Camera>())
+                {
+                    // Use scaling depending on which layer the object belongs to
+                    if (layerIDToScalingDict.ContainsKey(item.layer))
+                    {
+                        item.transform.position -= _focusPosition * layerIDToScalingDict[item.layer];
+                    }
+                    else
+                    {
+                        item.transform.position -= _focusPosition;
+                    }
+                }
             }
 
             // Re-enable nav mesh agents 

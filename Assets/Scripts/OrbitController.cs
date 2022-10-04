@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class OrbitController : MonoBehaviour
@@ -9,8 +7,13 @@ public class OrbitController : MonoBehaviour
     private float period;
     private float meanMotion;
 
-    private void Start()
+    void Start()
     {
         
+    }
+
+    private void Update()
+    {
+        //TODO implement elliptical orbiting according to Kepler's third law
     }
 }
