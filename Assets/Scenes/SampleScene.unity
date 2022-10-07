@@ -238,9 +238,11 @@ MonoBehaviour:
   turnThrust: 5000
   stopRotationKeyPID: 306
   stopRotationKeyThrust: 308
-  startingP: 10
+  startingP: 1
   startingI: 0
-  startingD: 10
+  startingD: 0.1
+  angularVelocityError: 0
+  angularVelocityCorrection: 0
 --- !u!4 &830226539 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3464539170958515750, guid: f00c8df389af47046baea2d14b531550, type: 3}
@@ -15212,7 +15214,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1627168248}
   - component: {fileID: 1627168250}
-  - component: {fileID: 1627168249}
   - component: {fileID: 1627168251}
   m_Layer: 30
   m_Name: Celestial Objects Camera
@@ -15236,14 +15237,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &1627168249
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1627168247}
-  m_Enabled: 1
 --- !u!20 &1627168250
 Camera:
   m_ObjectHideFlags: 0
