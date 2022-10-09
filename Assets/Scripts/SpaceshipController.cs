@@ -2,24 +2,47 @@ using UnityEngine;
 
 public class SpaceshipController : MonoBehaviour
 {
-    public float forwardThrust = 1000000f;
-    public float turnThrust = 500000f;
+    public SpaceshipData spaceshipData;
     Rigidbody rb;
-    public KeyCode stopRotationKeyPID = KeyCode.LeftControl;
-    public KeyCode stopRotationKeyThrust = KeyCode.LeftAlt;
-    private PID angularVelocityController;
-    public float startingP = 33.7766f;
-    public float startingI = 0.0f;
-    public float startingD = 0.2553191f;
+    public KeyCode toggleStrafeKeyID = KeyCode.LeftControl;
+    public KeyCode stopMovementKeyID = KeyCode.LeftAlt;
 
+    private PID angularPID;
+    public float angularPIDstartingP = 10.0f;
+    public float angularPIDstartingI = 0.0f;
+    public float angularPIDstartingD = 0.1f;
+    private bool isStoppingRotation;
+    private bool wasRotationAxisInputPresentLastUpdate;
+    //public for testing purposes
     public float angularVelocityError;
     public float angularVelocityCorrection;
+
+    private PID movementPID;
+    public float movementPIDstartingP = 1.0f;
+    public float movementPIDstartingI = 0.0f;
+    public float movementPIDstartingD = 0.01f;
+    private bool isStoppingMovement;
+    //public for testing purposes
+    public float movementError;
+    public float movementCorrection;
+
+    private float inputAxisVertical;
+    private float inputAxisHorizontal;
+    private float inputAxisRotate;
+    private float inputAxisThrust;
+
+    
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rb.mass = spaceshipData.mass;
         rb.useGravity = false;
-        angularVelocityController = new PID(startingP, startingI, startingD);
+        angularPID = new PID(angularPIDstartingP, angularPIDstartingI, angularPIDstartingD);
+        isStoppingRotation = false;
+        wasRotationAxisInputPresentLastUpdate = false;
+        movementPID = new PID(movementPIDstartingP, movementPIDstartingI, movementPIDstartingD);
+        isStoppingMovement = false;
     }
 
     void Update()
@@ -29,34 +52,102 @@ public class SpaceshipController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        readInputAxii();
         Turn();
         Thrust();
     }
 
+    private void readInputAxii()
+    {
+        inputAxisVertical = Input.GetAxis("Vertical");
+        inputAxisHorizontal = Input.GetAxis("Horizontal");
+        inputAxisRotate = Input.GetAxis("Rotate");
+        inputAxisThrust = Input.GetAxis("Thrust");
+    }
+
     void Turn()
     {
-        if (Input.GetKeyDown(stopRotationKeyPID))
+        float deltaTimeRotationThrust = spaceshipData.rotationThrust * Time.fixedDeltaTime;
+        bool isStrafingEnabled = Input.GetKey(toggleStrafeKeyID);
+        if (!isStrafingEnabled)
         {
-            angularVelocityController.Reset();
-            angularVelocityController.SetFactors(startingP, startingI, startingD);
-            //Debug.Log(string.Format("new pid with: {0} {1} {2}", startingP, startingI, startingD));
+            if (inputAxisVertical != 0.0f)
+            {
+                rb.AddRelativeTorque(inputAxisVertical * deltaTimeRotationThrust * Vector3.left);
+            }
+            if (inputAxisHorizontal != 0.0f)
+            {
+                rb.AddRelativeTorque(inputAxisHorizontal * deltaTimeRotationThrust * Vector3.up);
+            }
         }
-        else if (Input.GetKey(stopRotationKeyPID))
+        if (inputAxisRotate != 0.0f)
+        {
+            rb.AddRelativeTorque(inputAxisRotate * deltaTimeRotationThrust * Vector3.forward);
+        }
+
+        bool isAxisInputPresent = (!isStrafingEnabled && (inputAxisVertical != 0.0f || inputAxisHorizontal != 0.0f)) || inputAxisRotate != 0.0f;
+        if (wasRotationAxisInputPresentLastUpdate && !isAxisInputPresent)
+        {
+            angularPID.Reset();
+            angularPID.SetFactors(angularPIDstartingP, angularPIDstartingI, angularPIDstartingD);
+            //Debug.Log(string.Format("new pid with: {0} {1} {2}", startingP, startingI, startingD));
+            isStoppingRotation = true;
+        }
+        else if (!wasRotationAxisInputPresentLastUpdate && isAxisInputPresent)
+        {
+            isStoppingRotation = false;
+        }
+        if (isStoppingRotation)
         {
             angularVelocityError = rb.angularVelocity.magnitude;
-            angularVelocityCorrection = angularVelocityController.Update(angularVelocityError, Time.fixedDeltaTime);
-            rb.AddTorque(turnThrust * -rb.angularVelocity.normalized * angularVelocityCorrection * Time.fixedDeltaTime);
+            angularVelocityCorrection = angularPID.Update(angularVelocityError, Time.fixedDeltaTime);
+            rb.AddTorque(angularVelocityCorrection * deltaTimeRotationThrust * -rb.angularVelocity.normalized);
         }
-        else
-        {
-            rb.AddRelativeTorque(Input.GetAxis("Vertical") * turnThrust * Time.fixedDeltaTime * Vector3.left);
-            rb.AddRelativeTorque(Input.GetAxis("Horizontal") * turnThrust * Time.fixedDeltaTime * Vector3.up);
-            rb.AddRelativeTorque(Input.GetAxis("Rotate") * turnThrust * Time.fixedDeltaTime * Vector3.forward);
-        }
+        wasRotationAxisInputPresentLastUpdate = isAxisInputPresent;
     }
 
     void Thrust()
     {
-        rb.AddRelativeForce(Input.GetAxis("Thrust") * forwardThrust * Time.fixedDeltaTime * Vector3.forward);
+        if (Input.GetKey(stopMovementKeyID))
+        {
+            if (!isStoppingMovement)
+            {
+                movementPID.Reset();
+                movementPID.SetFactors(movementPIDstartingP, movementPIDstartingI, movementPIDstartingD);
+                isStoppingMovement = true;
+            }
+        }
+        else
+        {
+            isStoppingMovement = false;
+        }
+
+        float deltaTimeForwardThrust = spaceshipData.forwardThrust * Time.fixedDeltaTime;
+        if (isStoppingMovement)
+        {
+            movementError = rb.velocity.magnitude;
+            movementCorrection = movementPID.Update(movementError, Time.fixedDeltaTime);
+            rb.AddForce(movementCorrection * deltaTimeForwardThrust * -rb.velocity.normalized);
+        }
+        else
+        {
+            if (Input.GetKey(toggleStrafeKeyID))
+            {
+                float deltaTimeStrafeThrust = spaceshipData.strafeThrust * Time.fixedDeltaTime;
+                if (inputAxisVertical != 0.0f)
+                {
+                    rb.AddRelativeForce(inputAxisVertical * deltaTimeStrafeThrust * Vector3.right);
+                }
+                if (inputAxisHorizontal != 0.0f)
+                {
+                    rb.AddRelativeForce(inputAxisHorizontal * deltaTimeStrafeThrust * Vector3.up);
+                }
+            }
+            if (inputAxisThrust != 0.0f)
+            {
+                rb.AddRelativeForce(inputAxisThrust * deltaTimeForwardThrust * Vector3.forward);
+            }
+        }
+        
     }
 }

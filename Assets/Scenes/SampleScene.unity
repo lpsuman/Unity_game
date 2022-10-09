@@ -234,15 +234,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9afcf9bb6db1685418759bc76647b885, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardThrust: 1e+10
-  turnThrust: 5000
-  stopRotationKeyPID: 306
-  stopRotationKeyThrust: 308
-  startingP: 1
-  startingI: 0
-  startingD: 0.1
+  spaceshipData: {fileID: 11400000, guid: 557669193e0f0954d9c5ae595a1ba074, type: 2}
+  toggleStrafeKeyID: 306
+  stopMovementKeyID: 308
+  angularPIDstartingP: 10
+  angularPIDstartingI: 0
+  angularPIDstartingD: 0.1
   angularVelocityError: 0
   angularVelocityCorrection: 0
+  movementPIDstartingP: 1
+  movementPIDstartingI: 0
+  movementPIDstartingD: 0.01
+  movementError: 0
+  movementCorrection: 0
 --- !u!4 &830226539 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3464539170958515750, guid: f00c8df389af47046baea2d14b531550, type: 3}
@@ -15265,7 +15269,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: 0
+  m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 1073741824
@@ -15552,7 +15556,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: -2
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 2147483648
