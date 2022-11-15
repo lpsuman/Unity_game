@@ -1,6 +1,7 @@
+using Mirror;
 using UnityEngine;
 
-public class SpaceshipController : MonoBehaviour
+public class SpaceshipController : NetworkBehaviour
 {
     public SpaceshipData spaceshipData;
     Rigidbody rb;
