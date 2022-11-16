@@ -31,7 +31,6 @@ namespace Bluaniman.SpaceGame.Lobby
 
         public void SetPlayerName(string name)
         {
-            Debug.Log($"Set player name as: {name}");
             confirmButton.interactable = !string.IsNullOrEmpty(name);
         }
 

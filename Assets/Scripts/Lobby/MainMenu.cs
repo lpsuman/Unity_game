@@ -21,6 +21,7 @@ namespace Bluaniman.SpaceGame.Lobby
         }
         public void HostLobby()
         {
+            Debug.Log("Starting host");
             networkManager.StartHost();
             landingPanel.SetActive(false);
         }

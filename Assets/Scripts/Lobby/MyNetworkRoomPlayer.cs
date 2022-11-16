@@ -45,15 +45,11 @@ namespace Bluaniman.SpaceGame.Lobby
         public override void OnStartAuthority()
         {
             CmdSetDisplayName(PlayerNameInput.DisplayName);
-            lobbyUI.SetActive(true);
         }
 
         public override void OnStartClient()
         {
-            if (!hasAuthority)
-            {
-                lobbyUI.SetActive(false);
-            }
+            lobbyUI.SetActive(hasAuthority);
             Room.RoomPlayers.Add(this);
             UpdateDisplay();
         }
@@ -122,8 +118,7 @@ namespace Bluaniman.SpaceGame.Lobby
         public void CmdStartGame()
         {
             if (Room.RoomPlayers[0].connectionToClient != connectionToClient) { return; }
-
-            // Start game
+            Room.StartGame();
         }
     }
 }

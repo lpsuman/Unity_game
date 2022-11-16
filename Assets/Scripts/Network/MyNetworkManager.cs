@@ -11,16 +11,24 @@ namespace Bluaniman.SpaceGame.Networking
     public class MyNetworkManager : NetworkManager
     {
         private const string spawnablePrefabsFolderPath = "SpawnablePrefabs";
-        public const int MinPlayers = 2;
+        public const int MinPlayers = 1;
+        private const string gameSceneNamePrefix = "Scene Map";
         [Scene] [SerializeField] private string menuScene = string.Empty;
 
         [Header("Room")]
-        [SerializeField] private MyNetworkRoomPlayer roomPlayerPrefab;
+        [SerializeField] private MyNetworkRoomPlayer roomPlayerPrefab = null;
+
+        [Header("Game")]
+        [SerializeField] private MyNetworkGamePlayer gamePlayerPrefab = null;
+        [SerializeField] private GameObject playerSpawnSystem = null;
 
         public static event Action OnClientConnected;
         public static event Action OnClientDisconnected;
+        public static event Action<NetworkConnection> OnServerReadied;
 
-        public List<MyNetworkRoomPlayer> RoomPlayers { get; } = new List<MyNetworkRoomPlayer>();
+        public List<MyNetworkRoomPlayer> RoomPlayers { get; } = new();
+        public List<MyNetworkGamePlayer> GamePlayers { get; } = new();
+
 
         public override void OnStartServer() => spawnPrefabs = Resources.LoadAll<GameObject>(spawnablePrefabsFolderPath).ToList();
 
@@ -101,6 +109,46 @@ namespace Bluaniman.SpaceGame.Networking
                 if (!player.IsReady) { return false; }
             }
             return true;
+        }
+
+        public void StartGame()
+        {
+            if (SceneManager.GetActiveScene().path == menuScene)
+            {
+                if (!IsReadyToStart()) { return; }
+                ServerChangeScene($"{gameSceneNamePrefix} 1");
+            }
+        }
+
+        public override void ServerChangeScene(string newSceneName)
+        {
+            if (SceneManager.GetActiveScene().path == menuScene && newSceneName.StartsWith(gameSceneNamePrefix))
+            {
+                for (int i = RoomPlayers.Count - 1; i >= 0; i--)
+                {
+                    NetworkConnectionToClient conn = RoomPlayers[i].connectionToClient;
+                    MyNetworkGamePlayer gamePlayerInstance = Instantiate(gamePlayerPrefab);
+                    gamePlayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
+                    NetworkServer.Destroy(conn.identity.gameObject);
+                    NetworkServer.ReplacePlayerForConnection(conn, gamePlayerInstance.gameObject);
+                }
+            }
+            base.ServerChangeScene(newSceneName);
+        }
+
+        public override void OnServerReady(NetworkConnectionToClient conn)
+        {
+            base.OnServerReady(conn);
+            OnServerReadied?.Invoke(conn);
+        }
+
+        public override void OnServerSceneChanged(string sceneName)
+        {
+            if (sceneName.StartsWith(gameSceneNamePrefix))
+            {
+                GameObject playerSpawnSystemInstance = Instantiate(playerSpawnSystem);
+                NetworkServer.Spawn(playerSpawnSystemInstance);
+            }
         }
     }
 }

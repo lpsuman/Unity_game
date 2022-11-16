@@ -36,7 +36,8 @@ namespace Bluaniman.SpaceGame.Chat
         [Client]
         public void Send(string message)
         {
-            if (!Input.GetKeyDown(KeyCode.Return)) { return; }
+            // changed input system
+            // if (!Input.GetKeyDown(KeyCode.Return)) { return; }
             if (string.IsNullOrWhiteSpace(message)) { return; }
 
             CmdSendMessage(message);
