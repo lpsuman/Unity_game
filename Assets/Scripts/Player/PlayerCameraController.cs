@@ -4,9 +4,9 @@ using UnityEngine;
 using Mirror;
 using Cinemachine;
 
-namespace Bluaniman.SpaceGame.Input
+namespace Bluaniman.SpaceGame.Player
 {
-    public class PlayerCameraController : NetworkBehaviour
+    public class PlayerCameraController : AbstractNetworkController
     {
         [Header("Camera")]
         [SerializeField] private Vector2 maxFollowOffset = new(-1f, 6f);
@@ -14,37 +14,20 @@ namespace Bluaniman.SpaceGame.Input
         [SerializeField] private Transform playerTransform = null;
         [SerializeField] private CinemachineVirtualCamera virtualCamera = null;
 
-        private Controls controls;
-        private Controls Controls
-        {
-            get
-            {
-                return controls ??= new Controls();
-            }
-        }
         private CinemachineTransposer transposer;
 
-        public override void OnStartClient()
+        protected override void OnStartClientWithAuthority()
         {
             if (hasAuthority)
             {
                 Controls.Player.Look.performed += ctx => Look(ctx.ReadValue<Vector2>());
                 transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
             }
-            
             virtualCamera.gameObject.SetActive(hasAuthority);
-            enabled = hasAuthority;
         }
-
-        [ClientCallback]
-        private void OnEnable() => Controls.Enable();
-
-        [ClientCallback]
-        private void OnDisable() => Controls.Disable();
 
         private void Look(Vector2 lookAxis)
         {
-            Debug.Log("Looking");
             transposer.m_FollowOffset.y = Mathf.Clamp(
                 transposer.m_FollowOffset.y - (lookAxis.y * cameraVelocity.y * Time.deltaTime),
                 maxFollowOffset.x,

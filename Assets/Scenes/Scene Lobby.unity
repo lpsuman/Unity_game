@@ -235,13 +235,14 @@ MonoBehaviour:
   maxConnections: 4
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 633936550631768953, guid: f998e3f7ba82b95418a0f220b1b17246, type: 3}
-  autoCreatePlayer: 1
+  autoCreatePlayer: 0
   playerSpawnMethod: 0
   spawnPrefabs: []
   menuScene: Assets/Scenes/Scene Lobby.unity
   roomPlayerPrefab: {fileID: 8429709163511765234, guid: c62947b1d9967c94691b99a3b542fbea, type: 3}
   gamePlayerPrefab: {fileID: 5435819150911274701, guid: fc0197657be9d34408d69712a6797a8e, type: 3}
   playerSpawnSystem: {fileID: 3540706677678108833, guid: 7e0c8a130bb707143a9d3dc2ea11bc61, type: 3}
+  sceneMapId: 2
 --- !u!4 &214824682
 Transform:
   m_ObjectHideFlags: 0

@@ -1,40 +1,55 @@
+using System;
+using Bluaniman.SpaceGame.Player;
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class SpaceshipController : NetworkBehaviour
+public class SpaceshipController : AbstractNetworkController
 {
     public SpaceshipData spaceshipData;
-    Rigidbody rb;
-    public KeyCode toggleStrafeKeyID = KeyCode.LeftControl;
-    public KeyCode stopMovementKeyID = KeyCode.LeftAlt;
+    private Rigidbody rb;
+    [SerializeField] private KeyCode toggleStrafeKeyID = KeyCode.LeftControl;
+    [SerializeField] private KeyCode stopMovementKeyID = KeyCode.LeftAlt;
 
     private PID angularPID;
-    public float angularPIDstartingP = 10.0f;
-    public float angularPIDstartingI = 0.0f;
-    public float angularPIDstartingD = 0.1f;
+    [SerializeField] private float angularPIDstartingP = 10.0f;
+    [SerializeField] private float angularPIDstartingI = 0.0f;
+    [SerializeField] private float angularPIDstartingD = 0.1f;
     private bool isStoppingRotation;
     private bool wasRotationAxisInputPresentLastUpdate;
-    //public for testing purposes
-    public float angularVelocityError;
-    public float angularVelocityCorrection;
+    //showing in editor for testing purposes
+    [SerializeField] private float angularVelocityError;
+    [SerializeField] private float angularVelocityCorrection;
 
     private PID movementPID;
-    public float movementPIDstartingP = 1.0f;
-    public float movementPIDstartingI = 0.0f;
-    public float movementPIDstartingD = 0.01f;
+    [SerializeField] private float movementPIDstartingP = 1.0f;
+    [SerializeField] private float movementPIDstartingI = 0.0f;
+    [SerializeField] private float movementPIDstartingD = 0.01f;
     private bool isStoppingMovement;
-    //public for testing purposes
-    public float movementError;
-    public float movementCorrection;
+    //showing in editor for testing purposes
+    [SerializeField] private float movementError;
+    [SerializeField] private float movementCorrection;
 
-    private float inputAxisVertical;
-    private float inputAxisHorizontal;
-    private float inputAxisRotate;
-    private float inputAxisThrust;
+    private float pitchAxisInput;
+    private float yawAxisInput;
+    private float rollAxisInput;
+    private float thrustAxisInput;
 
-    
+    protected override void OnStartClientWithAuthority()
+    {
+        if (hasAuthority)
+        {
+            BindToInputAction<float>(Controls.Player.Pitch, CmdSetPitchAxisInput, CmdResetPitchAxisInput);
+        }
+    }
 
-    void Start()
+    [Command]
+    private void CmdSetPitchAxisInput(float pitch) => pitchAxisInput = pitch;
+
+    [Command]
+    private void CmdResetPitchAxisInput() => pitchAxisInput = 0f;
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.mass = spaceshipData.mass;
@@ -46,15 +61,19 @@ public class SpaceshipController : NetworkBehaviour
         isStoppingMovement = false;
     }
 
-    void Update()
+    private void Update()
     {
         Debug.DrawLine(transform.position, transform.position + rb.angularVelocity, Color.cyan);
     }
 
     private void FixedUpdate()
     {
-        readInputAxii();
+        if (!useNewInput)
+        {
+            readInputAxii();
+        }
         Turn();
+        Strafe();
         Thrust();
     }
 
@@ -66,7 +85,7 @@ public class SpaceshipController : NetworkBehaviour
         inputAxisThrust = Input.GetAxis("Thrust");
     }
 
-    void Turn()
+    private void Turn()
     {
         float deltaTimeRotationThrust = spaceshipData.rotationThrust * Time.fixedDeltaTime;
         bool isStrafingEnabled = Input.GetKey(toggleStrafeKeyID);
@@ -107,7 +126,12 @@ public class SpaceshipController : NetworkBehaviour
         wasRotationAxisInputPresentLastUpdate = isAxisInputPresent;
     }
 
-    void Thrust()
+    private void Strafe()
+    {
+        // TODO
+    }
+
+    private void Thrust()
     {
         if (Input.GetKey(stopMovementKeyID))
         {

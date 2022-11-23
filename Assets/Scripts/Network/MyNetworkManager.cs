@@ -21,6 +21,7 @@ namespace Bluaniman.SpaceGame.Networking
         [Header("Game")]
         [SerializeField] private MyNetworkGamePlayer gamePlayerPrefab = null;
         [SerializeField] private GameObject playerSpawnSystem = null;
+        [SerializeField] private int sceneMapId = 1;
 
         public static event Action OnClientConnected;
         public static event Action OnClientDisconnected;
@@ -45,6 +46,10 @@ namespace Bluaniman.SpaceGame.Networking
         {
             base.OnClientConnect();
             OnClientConnected?.Invoke();
+            if (!autoCreatePlayer)
+            {
+                NetworkClient.AddPlayer();
+            }
         }
 
         public override void OnClientDisconnect()
@@ -57,11 +62,13 @@ namespace Bluaniman.SpaceGame.Networking
         {
             if (numPlayers >= maxConnections)
             {
+                Debug.Log($"Disconnecting client due to too many players ({numPlayers}).");
                 conn.Disconnect();
                 return;
             }
             if (SceneManager.GetActiveScene().path != menuScene)
             {
+                Debug.Log("Disconnecting client because we are not in a lobby.");
                 conn.Disconnect();
                 return;
             }
@@ -74,6 +81,7 @@ namespace Bluaniman.SpaceGame.Networking
                 MyNetworkRoomPlayer roomPlayerInstance = Instantiate(roomPlayerPrefab);
                 roomPlayerInstance.IsLeader = RoomPlayers.Count == 0;
                 NetworkServer.AddPlayerForConnection(conn, roomPlayerInstance.gameObject);
+                Debug.Log("Added player.");
             }
         }
 
