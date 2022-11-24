@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using System.Linq;
 using Bluaniman.SpaceGame.Networking;
+using twoloop;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
@@ -42,7 +43,14 @@ namespace Bluaniman.SpaceGame.Lobby
             }
             GameObject playerInstance = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             NetworkServer.Spawn(playerInstance, conn);
+            TargetSetOriginShiftFocus(conn, playerInstance.transform);
             nextIndex++;
+        }
+
+        [TargetRpc]
+        public void TargetSetOriginShiftFocus(NetworkConnection target, Transform focusTransform)
+        {
+            OriginShift.singleton.focus = focusTransform;
         }
     }
 }

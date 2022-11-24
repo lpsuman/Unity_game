@@ -20,7 +20,6 @@ namespace Bluaniman.SpaceGame.Networking
 
         [Header("Game")]
         [SerializeField] private MyNetworkGamePlayer gamePlayerPrefab = null;
-        [SerializeField] private GameObject playerSpawnSystem = null;
         [SerializeField] private int sceneMapId = 1;
 
         public static event Action OnClientConnected;
@@ -81,7 +80,6 @@ namespace Bluaniman.SpaceGame.Networking
                 MyNetworkRoomPlayer roomPlayerInstance = Instantiate(roomPlayerPrefab);
                 roomPlayerInstance.IsLeader = RoomPlayers.Count == 0;
                 NetworkServer.AddPlayerForConnection(conn, roomPlayerInstance.gameObject);
-                Debug.Log("Added player.");
             }
         }
 
@@ -103,7 +101,7 @@ namespace Bluaniman.SpaceGame.Networking
 
         public void NotifyPlayersOfReadyState()
         {
-            foreach (MyNetworkRoomPlayer player in RoomPlayers)
+            foreach (MyNetworkRoomPlayer player in new List<MyNetworkRoomPlayer>(RoomPlayers))
             {
                 player.HandleReadyToStart(IsReadyToStart());
             }
@@ -124,7 +122,7 @@ namespace Bluaniman.SpaceGame.Networking
             if (SceneManager.GetActiveScene().path == menuScene)
             {
                 if (!IsReadyToStart()) { return; }
-                ServerChangeScene($"{gameSceneNamePrefix} 1");
+                ServerChangeScene($"{gameSceneNamePrefix} {sceneMapId}");
             }
         }
 
@@ -150,13 +148,13 @@ namespace Bluaniman.SpaceGame.Networking
             OnServerReadied?.Invoke(conn);
         }
 
-        public override void OnServerSceneChanged(string sceneName)
-        {
-            if (sceneName.StartsWith(gameSceneNamePrefix))
-            {
-                GameObject playerSpawnSystemInstance = Instantiate(playerSpawnSystem);
-                NetworkServer.Spawn(playerSpawnSystemInstance);
-            }
-        }
+        //public override void OnServerSceneChanged(string sceneName)
+        //{
+        //    if (sceneName.StartsWith(gameSceneNamePrefix))
+        //    {
+        //        GameObject playerSpawnSystemInstance = Instantiate(playerSpawnSystem);
+        //        NetworkServer.Spawn(playerSpawnSystemInstance);
+        //    }
+        //}
     }
 }

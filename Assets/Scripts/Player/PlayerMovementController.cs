@@ -15,7 +15,7 @@ namespace Bluaniman.SpaceGame.Player
 
         protected override void OnStartClientWithAuthority()
         {
-            if (hasAuthority)
+            if (isOwned)
             {
                 Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
                 Controls.Player.Move.canceled += ctx => ResetMovement();

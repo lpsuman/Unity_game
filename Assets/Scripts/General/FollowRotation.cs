@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class FollowRotation : MonoBehaviour
 {
-    public Transform target;
+    [SerializeField] private Transform target;
 
-    void Update()
+    public void Update()
     {
         transform.rotation = target.rotation;
     }

@@ -22,7 +22,7 @@ namespace Bluaniman.SpaceGame.Player
         public override void OnStartClient()
         {
             OnStartClientWithAuthority();
-            enabled = hasAuthority;
+            enabled = isOwned;
         }
 
         protected void BindToInputAction<T>(InputAction inputAction, Action<T> performedAction, Action canceledAction) where T : struct

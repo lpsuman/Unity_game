@@ -1,6 +1,7 @@
 using System;
 using Bluaniman.SpaceGame.Networking;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
@@ -13,8 +14,19 @@ namespace Bluaniman.SpaceGame.Lobby
         [SerializeField] private GameObject landingPanel = null;
         [SerializeField] private GameObject ipAddressInputPanel = null;
 
+        [Header("Debug")]
+        [SerializeField] private bool autoHost = false;
+        [SerializeField] private Button confirmNameButton = null;
+        [SerializeField] private Button hostButton = null;
+
         private void Start()
         {
+            if (autoHost)
+            {
+                confirmNameButton.onClick.Invoke();
+                hostButton.onClick.Invoke();
+                return;
+            }
             nameInputPanel.SetActive(true);
             landingPanel.SetActive(false);
             ipAddressInputPanel.SetActive(false);

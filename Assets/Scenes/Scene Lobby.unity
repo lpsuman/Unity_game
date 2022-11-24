@@ -227,7 +227,8 @@ MonoBehaviour:
   dontDestroyOnLoad: 1
   runInBackground: 1
   autoStartServerBuild: 1
-  serverTickRate: 30
+  autoConnectClientBuild: 0
+  sendRate: 30
   offlineScene: 
   onlineScene: 
   transport: {fileID: 214824680}
@@ -238,10 +239,10 @@ MonoBehaviour:
   autoCreatePlayer: 0
   playerSpawnMethod: 0
   spawnPrefabs: []
+  timeInterpolationGui: 0
   menuScene: Assets/Scenes/Scene Lobby.unity
   roomPlayerPrefab: {fileID: 8429709163511765234, guid: c62947b1d9967c94691b99a3b542fbea, type: 3}
   gamePlayerPrefab: {fileID: 5435819150911274701, guid: fc0197657be9d34408d69712a6797a8e, type: 3}
-  playerSpawnSystem: {fileID: 3540706677678108833, guid: 7e0c8a130bb707143a9d3dc2ea11bc61, type: 3}
   sceneMapId: 2
 --- !u!4 &214824682
 Transform:
@@ -910,6 +911,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3089873517925889744, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
   m_PrefabInstance: {fileID: 854124275}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &985765608 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8853439500574290036, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
+  m_PrefabInstance: {fileID: 854124275}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1008939698
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,6 +2033,9 @@ MonoBehaviour:
   nameInputPanel: {fileID: 453956566}
   landingPanel: {fileID: 1373288798}
   ipAddressInputPanel: {fileID: 1008939698}
+  autoHost: 1
+  confirmNameButton: {fileID: 1044166831}
+  hostButton: {fileID: 985765608}
 --- !u!1001 &1804553101
 PrefabInstance:
   m_ObjectHideFlags: 0

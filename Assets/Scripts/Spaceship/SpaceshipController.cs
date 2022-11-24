@@ -8,8 +8,6 @@ public class SpaceshipController : AbstractNetworkController
 {
     public SpaceshipData spaceshipData;
     private Rigidbody rb;
-    [SerializeField] private KeyCode toggleStrafeKeyID = KeyCode.LeftControl;
-    [SerializeField] private KeyCode stopMovementKeyID = KeyCode.LeftAlt;
 
     private PID angularPID;
     [SerializeField] private float angularPIDstartingP = 10.0f;
@@ -30,26 +28,39 @@ public class SpaceshipController : AbstractNetworkController
     [SerializeField] private float movementError;
     [SerializeField] private float movementCorrection;
 
-    private float pitchAxisInput;
-    private float yawAxisInput;
-    private float rollAxisInput;
-    private float thrustAxisInput;
+    [SyncVar]
+    private Vector3 rotationInput = Vector3.zero;
+    [SyncVar]
+    private Vector3 thrustInput = Vector3.zero;
 
     protected override void OnStartClientWithAuthority()
     {
-        if (hasAuthority)
+        if (isOwned)
         {
-            BindToInputAction<float>(Controls.Player.Pitch, CmdSetPitchAxisInput, CmdResetPitchAxisInput);
+            BindToInputAction<float>(Controls.Player.Pitch, SetPitchAxisInput, ResetPitchAxisInput);
+            BindToInputAction<float>(Controls.Player.Yaw, SetYawAxisInput, ResetYawAxisInput);
+            BindToInputAction<float>(Controls.Player.Roll, SetRollAxisInput, ResetRollAxisInput);
+            BindToInputAction<float>(Controls.Player.Thrust, SetForwardThrustInput, ResetForwardThrustInput);
         }
     }
 
-    [Command]
-    private void CmdSetPitchAxisInput(float pitch) => pitchAxisInput = pitch;
+    private void SetPitchAxisInput(float pitch) => rotationInput.x = pitch;
 
-    [Command]
-    private void CmdResetPitchAxisInput() => pitchAxisInput = 0f;
+    private void ResetPitchAxisInput() => rotationInput.x = 0f;
 
-    private void Start()
+    private void SetYawAxisInput(float pitch) => rotationInput.y = pitch;
+
+    private void ResetYawAxisInput() => rotationInput.y = 0f;
+
+    private void SetRollAxisInput(float pitch) => rotationInput.z = pitch;
+
+    private void ResetRollAxisInput() => rotationInput.z = 0f;
+
+    private void SetForwardThrustInput(float pitch) => thrustInput.z = pitch;
+
+    private void ResetForwardThrustInput() => thrustInput.z = 0f;
+
+    public override void OnStartServer()
     {
         rb = GetComponent<Rigidbody>();
         rb.mass = spaceshipData.mass;
@@ -61,56 +72,36 @@ public class SpaceshipController : AbstractNetworkController
         isStoppingMovement = false;
     }
 
-    private void Update()
-    {
-        Debug.DrawLine(transform.position, transform.position + rb.angularVelocity, Color.cyan);
-    }
-
+    [ServerCallback]
     private void FixedUpdate()
     {
-        if (!useNewInput)
-        {
-            readInputAxii();
-        }
         Turn();
         Strafe();
         Thrust();
     }
 
-    private void readInputAxii()
-    {
-        inputAxisVertical = Input.GetAxis("Vertical");
-        inputAxisHorizontal = Input.GetAxis("Horizontal");
-        inputAxisRotate = Input.GetAxis("Rotate");
-        inputAxisThrust = Input.GetAxis("Thrust");
-    }
-
+    [Server]
     private void Turn()
     {
         float deltaTimeRotationThrust = spaceshipData.rotationThrust * Time.fixedDeltaTime;
-        bool isStrafingEnabled = Input.GetKey(toggleStrafeKeyID);
-        if (!isStrafingEnabled)
+        if (rotationInput.x != 0.0f)
         {
-            if (inputAxisVertical != 0.0f)
-            {
-                rb.AddRelativeTorque(inputAxisVertical * deltaTimeRotationThrust * Vector3.left);
-            }
-            if (inputAxisHorizontal != 0.0f)
-            {
-                rb.AddRelativeTorque(inputAxisHorizontal * deltaTimeRotationThrust * Vector3.up);
-            }
+            rb.AddRelativeTorque(rotationInput.x * deltaTimeRotationThrust * Vector3.left);
         }
-        if (inputAxisRotate != 0.0f)
+        if (rotationInput.y != 0.0f)
         {
-            rb.AddRelativeTorque(inputAxisRotate * deltaTimeRotationThrust * Vector3.forward);
+            rb.AddRelativeTorque(rotationInput.y * deltaTimeRotationThrust * Vector3.up);
+        }
+        if (rotationInput.z != 0.0f)
+        {
+            rb.AddRelativeTorque(rotationInput.z * deltaTimeRotationThrust * Vector3.forward);
         }
 
-        bool isAxisInputPresent = (!isStrafingEnabled && (inputAxisVertical != 0.0f || inputAxisHorizontal != 0.0f)) || inputAxisRotate != 0.0f;
+        bool isAxisInputPresent = rotationInput.magnitude != 0f;
         if (wasRotationAxisInputPresentLastUpdate && !isAxisInputPresent)
         {
             angularPID.Reset();
             angularPID.SetFactors(angularPIDstartingP, angularPIDstartingI, angularPIDstartingD);
-            //Debug.Log(string.Format("new pid with: {0} {1} {2}", startingP, startingI, startingD));
             isStoppingRotation = true;
         }
         else if (!wasRotationAxisInputPresentLastUpdate && isAxisInputPresent)
@@ -126,6 +117,7 @@ public class SpaceshipController : AbstractNetworkController
         wasRotationAxisInputPresentLastUpdate = isAxisInputPresent;
     }
 
+    [Server]
     private void Strafe()
     {
         // TODO
@@ -133,7 +125,7 @@ public class SpaceshipController : AbstractNetworkController
 
     private void Thrust()
     {
-        if (Input.GetKey(stopMovementKeyID))
+        if (thrustInput.z < 0f)
         {
             if (!isStoppingMovement)
             {
@@ -156,21 +148,21 @@ public class SpaceshipController : AbstractNetworkController
         }
         else
         {
-            if (Input.GetKey(toggleStrafeKeyID))
+            //if (Input.GetKey(toggleStrafeKeyID))
+            //{
+            //    float deltaTimeStrafeThrust = spaceshipData.strafeThrust * Time.fixedDeltaTime;
+            //    if (inputAxisVertical != 0.0f)
+            //    {
+            //        rb.AddRelativeForce(inputAxisVertical * deltaTimeStrafeThrust * Vector3.right);
+            //    }
+            //    if (inputAxisHorizontal != 0.0f)
+            //    {
+            //        rb.AddRelativeForce(inputAxisHorizontal * deltaTimeStrafeThrust * Vector3.up);
+            //    }
+            //}
+            if (thrustInput.z != 0.0f)
             {
-                float deltaTimeStrafeThrust = spaceshipData.strafeThrust * Time.fixedDeltaTime;
-                if (inputAxisVertical != 0.0f)
-                {
-                    rb.AddRelativeForce(inputAxisVertical * deltaTimeStrafeThrust * Vector3.right);
-                }
-                if (inputAxisHorizontal != 0.0f)
-                {
-                    rb.AddRelativeForce(inputAxisHorizontal * deltaTimeStrafeThrust * Vector3.up);
-                }
-            }
-            if (inputAxisThrust != 0.0f)
-            {
-                rb.AddRelativeForce(inputAxisThrust * deltaTimeForwardThrust * Vector3.forward);
+                rb.AddRelativeForce(thrustInput.z * deltaTimeForwardThrust * Vector3.forward);
             }
         }
         

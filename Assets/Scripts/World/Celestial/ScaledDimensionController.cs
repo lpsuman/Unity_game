@@ -1,10 +1,15 @@
+using twoloop;
 using UnityEngine;
 
 public class ScaledDimensionController : MonoBehaviour
 {
     public float scaling;
-    void Start()
+
+    public void Update()
     {
-        twoloop.FloatingOrigin.singleton.layerIDToScalingDict[gameObject.layer] = scaling;
+        if (transform.hasChanged)
+        {
+            transform.position = Vector3.zero;
+        }
     }
 }

@@ -15,6 +15,11 @@ namespace Bluaniman.SpaceGame.Lobby
         [SerializeField] private TMP_Text[] playerReadyTexts = null;
         [SerializeField] private Button startGameButton = null;
 
+        [Header("Debug")]
+        [SerializeField] private bool autoReady = false;
+        [SerializeField] private bool autoStart = false;
+        [SerializeField] private Button readyButton = null;
+
         [SyncVar(hook = nameof(HandleDisplayNameChanged))]
         public string DisplayName = "Loading...";
         [SyncVar(hook = nameof(HandleReadyStatusChanged))]
@@ -49,9 +54,13 @@ namespace Bluaniman.SpaceGame.Lobby
 
         public override void OnStartClient()
         {
-            lobbyUI.SetActive(hasAuthority);
+            lobbyUI.SetActive(isOwned);
             Room.RoomPlayers.Add(this);
             UpdateDisplay();
+            if (autoReady)
+            {
+                readyButton.onClick.Invoke();
+            }
         }
 
         public override void OnStopClient()
@@ -65,11 +74,11 @@ namespace Bluaniman.SpaceGame.Lobby
 
         private void UpdateDisplay()
         {
-            if (!hasAuthority)
+            if (!isOwned)
             {
                 foreach (MyNetworkRoomPlayer player in Room.RoomPlayers)
                 {
-                    if (player.hasAuthority)
+                    if (player.isOwned)
                     {
                         player.UpdateDisplay();
                         break;
@@ -99,6 +108,10 @@ namespace Bluaniman.SpaceGame.Lobby
         {
             if (!isLeader) { return; }
             startGameButton.interactable = readyToStart;
+            if (startGameButton.interactable == true && autoStart)
+            {
+                startGameButton.onClick.Invoke();
+            }
         }
 
         [Command]

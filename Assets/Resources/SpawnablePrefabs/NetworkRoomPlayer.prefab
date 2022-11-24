@@ -178,6 +178,9 @@ MonoBehaviour:
   - {fileID: 4732473111338453047}
   - {fileID: 4214741972067283441}
   startGameButton: {fileID: 5768942438262204530}
+  autoReady: 1
+  autoStart: 1
+  readyButton: {fileID: 7889003808873178367}
   DisplayName: Loading...
   IsReady: 0
 --- !u!1 &8844979792332965976
@@ -656,6 +659,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3089873517925889744, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
   m_PrefabInstance: {fileID: 1704299630246925451}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7889003808873178367 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8853439500574290036, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
+  m_PrefabInstance: {fileID: 1704299630246925451}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3085769231702104070
 PrefabInstance:
   m_ObjectHideFlags: 0

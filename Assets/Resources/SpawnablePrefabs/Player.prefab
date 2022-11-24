@@ -415,9 +415,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
+  _assetId: 198700178
   serverOnly: 0
   visible: 0
-  m_AssetId: 935b93cc6cb0b5542b582e0bc54bf626
   hasSpawned: 0
 --- !u!114 &3884638003406430617
 MonoBehaviour:
@@ -431,20 +431,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 1
   syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 1
-  sendRate: 30
-  bufferTimeMultiplier: 2
-  bufferSizeLimit: 64
-  catchupNegativeThreshold: -1
-  catchupPositiveThreshold: 1
-  catchupSpeed: 0.009999999776482582
-  slowdownSpeed: 0.009999999776482582
-  driftEmaDuration: 1
-  dynamicAdjustment: 1
-  dynamicAdjustmentTolerance: 1
-  deliveryTimeEmaDuration: 2
+  syncInterval: 0
+  target: {fileID: 8960525636573479860}
+  clientAuthority: 0
   onlySyncOnChange: 1
   bufferResetMultiplier: 5
   positionSensitivity: 0.01
@@ -486,11 +477,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc07ba3a8e3bcac488f96645f34c889c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
   maxFollowOffset: {x: -1, y: 6}
   cameraVelocity: {x: 4, y: 0.25}
-  playerTransform: {fileID: 8960525636573479860}
   virtualCamera: {fileID: 186897446280561829}
 --- !u!114 &4961021348583769026
 MonoBehaviour:
@@ -504,6 +495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a615a6ea6e46e3144a39d3c63fdbf6a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
   movementSpeed: 5
