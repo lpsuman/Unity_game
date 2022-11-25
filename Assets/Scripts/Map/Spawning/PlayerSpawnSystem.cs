@@ -5,6 +5,7 @@ using Mirror;
 using System.Linq;
 using Bluaniman.SpaceGame.Networking;
 using twoloop;
+using Bluaniman.SpaceGame.Debugging;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
@@ -14,6 +15,10 @@ namespace Bluaniman.SpaceGame.Lobby
 
         private static List<Transform> spawnPoints = new();
         private int nextIndex = 0;
+
+        [Header("Debug")]
+        [SerializeField] private UpdateStartLogger updateStartLogger = null;
+        [SerializeField] private UpdateEndLogger updateEndLogger = null;
 
         public static void AddSpawnPoint(Transform transform)
         {
@@ -44,6 +49,14 @@ namespace Bluaniman.SpaceGame.Lobby
             GameObject playerInstance = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             NetworkServer.Spawn(playerInstance, conn);
             TargetSetOriginShiftFocus(conn, playerInstance.transform);
+            if (updateStartLogger != null)
+            {
+                updateStartLogger.optionalTransformToLog = playerInstance.transform;
+            }
+            if (updateEndLogger != null)
+            {
+                updateEndLogger.optionalTransformToLog = playerInstance.transform;
+            }
             nextIndex++;
         }
 

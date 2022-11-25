@@ -86,7 +86,7 @@ public class SpaceshipController : AbstractNetworkController
         float deltaTimeRotationThrust = spaceshipData.rotationThrust * Time.fixedDeltaTime;
         if (rotationInput.x != 0.0f)
         {
-            rb.AddRelativeTorque(rotationInput.x * deltaTimeRotationThrust * Vector3.left);
+            rb.AddRelativeTorque(rotationInput.x * deltaTimeRotationThrust * Vector3.right);
         }
         if (rotationInput.y != 0.0f)
         {

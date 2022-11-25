@@ -19,7 +19,7 @@ namespace Bluaniman.SpaceGame.Player
         {
             if (isOwned)
             {
-                //Controls.Player.Look.performed += ctx => Look(ctx.ReadValue<Vector2>());
+                Controls.Player.Look.performed += ctx => Look(ctx.ReadValue<Vector2>());
                 transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
             }
             virtualCamera.gameObject.SetActive(isOwned);
@@ -27,10 +27,11 @@ namespace Bluaniman.SpaceGame.Player
 
         private void Look(Vector2 lookAxis)
         {
-            transposer.m_FollowOffset.y = Mathf.Clamp(
-                transposer.m_FollowOffset.y - (lookAxis.y * cameraVelocity.y * Time.deltaTime),
-                maxFollowOffset.x,
-                maxFollowOffset.y);
+            //Debug.Log($"Transposer follow offset: {transposer.m_FollowOffset}");
+            //transposer.m_FollowOffset.y = Mathf.Clamp(
+            //    transposer.m_FollowOffset.y - (lookAxis.y * cameraVelocity.y * Time.deltaTime),
+            //    maxFollowOffset.x,
+            //    maxFollowOffset.y);
         }
     }
 }

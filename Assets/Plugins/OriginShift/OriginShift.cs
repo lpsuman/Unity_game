@@ -549,7 +549,11 @@ namespace twoloop
             var rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
             foreach (var item in rootGameObjects)
             {
-                item.transform.position -= _focusPosition;
+                // Background and Celestial layers are ignored
+                if (item.layer < 30)
+                {
+                    item.transform.position -= _focusPosition;
+                }
             }
 
             // Re-enable nav mesh agents 

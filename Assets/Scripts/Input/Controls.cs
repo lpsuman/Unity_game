@@ -165,7 +165,7 @@ namespace Bluaniman.SpaceGame.Input
                 {
                     ""name"": ""negative"",
                     ""id"": ""e94a57e8-0ce0-447b-893a-d5b04fedd007"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard & Mouse"",
@@ -176,7 +176,7 @@ namespace Bluaniman.SpaceGame.Input
                 {
                     ""name"": ""positive"",
                     ""id"": ""3a42d8e1-890d-4c77-91b5-53e8ef601fd0"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard & Mouse"",
@@ -231,7 +231,7 @@ namespace Bluaniman.SpaceGame.Input
                 {
                     ""name"": ""negative"",
                     ""id"": ""bd084a64-063e-45f9-a83a-4d3f7594d5da"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard & Mouse"",
@@ -242,7 +242,7 @@ namespace Bluaniman.SpaceGame.Input
                 {
                     ""name"": ""positive"",
                     ""id"": ""72882c3f-ed7a-4a18-8857-bf2b33e8e04b"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard & Mouse"",

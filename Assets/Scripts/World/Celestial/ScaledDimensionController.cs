@@ -5,11 +5,8 @@ public class ScaledDimensionController : MonoBehaviour
 {
     public float scaling;
 
-    public void Update()
+    public void Start()
     {
-        if (transform.hasChanged)
-        {
-            transform.position = Vector3.zero;
-        }
+        OriginShift.OnOriginShifted.AddListener((localOffset, _) => transform.position = -localOffset * scaling);
     }
 }

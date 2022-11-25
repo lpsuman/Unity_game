@@ -153,8 +153,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 387260797417261108}
-  m_LocalRotation: {x: 0.07437625, y: 0.000000005068397, z: -3.780153e-10, w: 0.9972303}
-  m_LocalPosition: {x: 0, y: 5, z: -20}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -180,8 +180,8 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 7174362082850715374}
-  m_Follow: {fileID: 7174362082850715374}
+  m_LookAt: {fileID: 7674618156202781957}
+  m_Follow: {fileID: 7674618156202781957}
   m_Lens:
     FieldOfView: 40
     OrthographicSize: 10
@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 1697976177685097231}
   - component: {fileID: 7068293887762908940}
   - component: {fileID: 7403018258560725576}
-  - component: {fileID: 7936752331423714996}
+  - component: {fileID: 3476202001561173401}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Damping: 0
---- !u!114 &7936752331423714996
+--- !u!114 &3476202001561173401
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -268,19 +268,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 6497690993892667880}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7155796051b734daa718462081dc5f, type: 3}
+  m_Script: {fileID: 11500000, guid: bd6043bde05a7fc4cba197d06915c1e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindingMode: 3
-  m_FollowOffset: {x: 0, y: 3, z: -10}
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
-  m_AngularDampingMode: 0
-  m_PitchDamping: 0
-  m_YawDamping: 0
-  m_RollDamping: 0
-  m_AngularDamping: 0
+  Damping: {x: 0, y: 0, z: 0}
+  ShoulderOffset: {x: 0, y: 0, z: 0}
+  VerticalArmLength: 3
+  CameraSide: 1
+  CameraDistance: 10
+  CameraCollisionFilter:
+    serializedVersion: 2
+    m_Bits: 0
+  IgnoreTag: 
+  CameraRadius: 0.2
+  DampingIntoCollision: 0
+  DampingFromCollision: 2
 --- !u!1 &8018749676320522877
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,6 +298,7 @@ GameObject:
   - component: {fileID: 2999575278672236875}
   - component: {fileID: 2299859144026722099}
   - component: {fileID: 7914661812110744075}
+  - component: {fileID: 5892311159560857662}
   m_Layer: 0
   m_Name: Spaceship
   m_TagString: Untagged
@@ -351,7 +354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   clientAuthority: 0
   isAutoFocus: 0
   lerpPositionAmount: 0.35
@@ -386,9 +389,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   targetRb: {fileID: 3075203574099729419}
-  serverOnlyPhysics: 0
+  serverOnlyPhysics: 1
   clientAuthority: 1
   isAutoFocus: 0
   lerpPositionAmount: 0.2
@@ -437,4 +440,20 @@ MonoBehaviour:
   syncInterval: 0.1
   maxFollowOffset: {x: -1, y: 6}
   cameraVelocity: {x: 4, y: 0.25}
+  virtualCamera: {fileID: 7351524879803008780}
+--- !u!114 &5892311159560857662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8018749676320522877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fece43edf199fc84097b38e9c5058de1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
   virtualCamera: {fileID: 7351524879803008780}
