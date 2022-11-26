@@ -28,8 +28,14 @@ public class SpaceshipController : AbstractNetworkController
     [SerializeField] private float movementError;
     [SerializeField] private float movementCorrection;
 
+    //[SyncVar(hook = nameof(RotationInputChanged))]
+    //private Vector3 rotationInput = Vector3.zero;
+    [SyncVar(hook = nameof(RotationInputChanged))]
+    private float pitchInput = 0f;
     [SyncVar]
-    private Vector3 rotationInput = Vector3.zero;
+    private float yawInput = 0f;
+    [SyncVar]
+    private float rollInput = 0f;
     [SyncVar]
     private Vector3 thrustInput = Vector3.zero;
 
@@ -44,21 +50,32 @@ public class SpaceshipController : AbstractNetworkController
         }
     }
 
-    private void SetPitchAxisInput(float pitch) => rotationInput.x = pitch;
+    private void SetPitchAxisInput(float pitch) => pitchInput = pitch;
 
-    private void ResetPitchAxisInput() => rotationInput.x = 0f;
+    private void ResetPitchAxisInput() => pitchInput = 0f;
 
-    private void SetYawAxisInput(float pitch) => rotationInput.y = pitch;
+    private void SetYawAxisInput(float pitch) => yawInput = pitch;
 
-    private void ResetYawAxisInput() => rotationInput.y = 0f;
+    private void ResetYawAxisInput() => yawInput = 0f;
 
-    private void SetRollAxisInput(float pitch) => rotationInput.z = pitch;
+    private void SetRollAxisInput(float pitch) => rollInput = pitch;
 
-    private void ResetRollAxisInput() => rotationInput.z = 0f;
+    private void ResetRollAxisInput() => rollInput = 0f;
 
     private void SetForwardThrustInput(float pitch) => thrustInput.z = pitch;
 
     private void ResetForwardThrustInput() => thrustInput.z = 0f;
+
+    private void RotationInputChanged(float oldValue, float newValue)
+    {
+        CmdDebugLogRotationInputChanged(newValue);
+    }
+
+    [Command]
+    private void CmdDebugLogRotationInputChanged(float newValue)
+    {
+        Debug.Log($"Rotation input changed: {newValue}");
+    }
 
     public override void OnStartServer()
     {
@@ -84,20 +101,20 @@ public class SpaceshipController : AbstractNetworkController
     private void Turn()
     {
         float deltaTimeRotationThrust = spaceshipData.rotationThrust * Time.fixedDeltaTime;
-        if (rotationInput.x != 0.0f)
+        if (pitchInput != 0.0f)
         {
-            rb.AddRelativeTorque(rotationInput.x * deltaTimeRotationThrust * Vector3.right);
+            rb.AddRelativeTorque(pitchInput * deltaTimeRotationThrust * Vector3.right);
         }
-        if (rotationInput.y != 0.0f)
+        if (yawInput != 0.0f)
         {
-            rb.AddRelativeTorque(rotationInput.y * deltaTimeRotationThrust * Vector3.up);
+            rb.AddRelativeTorque(yawInput * deltaTimeRotationThrust * Vector3.up);
         }
-        if (rotationInput.z != 0.0f)
+        if (rollInput != 0.0f)
         {
-            rb.AddRelativeTorque(rotationInput.z * deltaTimeRotationThrust * Vector3.forward);
+            rb.AddRelativeTorque(rollInput * deltaTimeRotationThrust * Vector3.forward);
         }
 
-        bool isAxisInputPresent = rotationInput.magnitude != 0f;
+        bool isAxisInputPresent = pitchInput != 0f || yawInput != 0f || rollInput != 0f;
         if (wasRotationAxisInputPresentLastUpdate && !isAxisInputPresent)
         {
             angularPID.Reset();
@@ -123,6 +140,7 @@ public class SpaceshipController : AbstractNetworkController
         // TODO
     }
 
+    [Server]
     private void Thrust()
     {
         if (thrustInput.z < 0f)

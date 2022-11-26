@@ -148,9 +148,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
+  _assetId: 4091529211
   serverOnly: 0
   visible: 0
-  m_AssetId: c62947b1d9967c94691b99a3b542fbea
   hasSpawned: 0
 --- !u!114 &8429709163511765234
 MonoBehaviour:
@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 536c1d563855ebb4389953d669237de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
   lobbyUI: {fileID: 5378133692551390164}
@@ -179,7 +180,7 @@ MonoBehaviour:
   - {fileID: 4214741972067283441}
   startGameButton: {fileID: 5768942438262204530}
   autoReady: 1
-  autoStart: 1
+  autoStart: 0
   readyButton: {fileID: 7889003808873178367}
   DisplayName: Loading...
   IsReady: 0

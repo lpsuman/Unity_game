@@ -57,7 +57,7 @@ namespace Bluaniman.SpaceGame.Lobby
             lobbyUI.SetActive(isOwned);
             Room.RoomPlayers.Add(this);
             UpdateDisplay();
-            if (autoReady)
+            if (isOwned && autoReady)
             {
                 readyButton.onClick.Invoke();
             }
@@ -108,7 +108,7 @@ namespace Bluaniman.SpaceGame.Lobby
         {
             if (!isLeader) { return; }
             startGameButton.interactable = readyToStart;
-            if (startGameButton.interactable == true && autoStart)
+            if (startGameButton.interactable && autoStart && Application.isEditor)
             {
                 startGameButton.onClick.Invoke();
             }

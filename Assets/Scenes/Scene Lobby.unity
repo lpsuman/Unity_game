@@ -2033,7 +2033,7 @@ MonoBehaviour:
   nameInputPanel: {fileID: 453956566}
   landingPanel: {fileID: 1373288798}
   ipAddressInputPanel: {fileID: 1008939698}
-  autoHost: 1
+  autoHost: 0
   confirmNameButton: {fileID: 1044166831}
   hostButton: {fileID: 985765608}
 --- !u!1001 &1804553101

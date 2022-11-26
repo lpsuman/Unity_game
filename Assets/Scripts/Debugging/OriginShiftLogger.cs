@@ -1,11 +1,12 @@
 using UnityEngine;
 using twoloop;
+using Mirror;
 
 namespace Bluaniman.SpaceGame.Debugging
 {
-	public class OriginShiftLogger : MonoBehaviour
+	public class OriginShiftLogger : NetworkBehaviour
 	{
-        public void Start()
+        public override void OnStartServer()
         {
             OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
             {

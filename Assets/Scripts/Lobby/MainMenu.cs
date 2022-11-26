@@ -21,7 +21,7 @@ namespace Bluaniman.SpaceGame.Lobby
 
         private void Start()
         {
-            if (autoHost)
+            if (autoHost && Application.isEditor)
             {
                 confirmNameButton.onClick.Invoke();
                 hostButton.onClick.Invoke();
@@ -33,7 +33,7 @@ namespace Bluaniman.SpaceGame.Lobby
         }
         public void HostLobby()
         {
-            Debug.Log("Starting host");
+            //Debug.Log("Starting host");
             networkManager.StartHost();
             landingPanel.SetActive(false);
         }

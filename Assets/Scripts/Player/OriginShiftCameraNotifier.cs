@@ -8,20 +8,14 @@ namespace Bluaniman.SpaceGame.Player
     {
 		[SerializeField] private CinemachineVirtualCamera virtualCamera = null;
 
-        public void Start()
+        public override void OnStartClient()
         {
             OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
             {
                 if (wasFixedUpdateCalledThisFrame)
                 {
-                    //virtualCamera.PreviousStateIsValid = false;
-                    virtualCamera.OnTargetObjectWarped(transform, shiftVector);
-                    Debug.Log("Camera notified.");
-
-                    //int numVcams = CinemachineCore.Instance.VirtualCameraCount;
-                    //for (int i = 0; i < numVcams; ++i)
-                    //    CinemachineCore.Instance.GetVirtualCamera(i).OnTargetObjectWarped(
-                    //        transform, shiftVector);
+                    virtualCamera.OnTargetObjectWarped(transform, Vector3.zero);
+                    //Debug.Log("Camera notified.");
                 }
             });
         }
