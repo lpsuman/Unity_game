@@ -1,19 +1,18 @@
 using UnityEngine;
 using Cinemachine;
 using twoloop;
-using Mirror;
 
 namespace Bluaniman.SpaceGame.Player
 {
-	public class CinemachineBrainController : AbstractLateAfterFixedUpdate
+	public class CinemachineBrainController : MonoBehaviour
 	{
         [SerializeField] private CinemachineBrain cinemachineBrain = null;
 
-        public override void OnStartClient()
+        public void Start()
         {
             OriginShift.OnOriginShifted.AddListener((_, _) =>
             {
-                if (wasFixedUpdateCalledThisFrame)
+                if (AfterFixedUpdate.wasFixedUpdateCalledThisFrame)
                 {
                     cinemachineBrain.ManualUpdate();
                     //Debug.Log("Brain notified.");
@@ -21,11 +20,9 @@ namespace Bluaniman.SpaceGame.Player
             });
         }
 
-        [ClientCallback]
-        public new void FixedUpdate()
+        public void FixedUpdate()
         {
             cinemachineBrain.ManualUpdate();
-            base.FixedUpdate();
         }
     }
 }

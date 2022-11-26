@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Bluaniman.SpaceGame.Input;
@@ -14,7 +13,12 @@ namespace Bluaniman.SpaceGame.Player
         {
             get
             {
-                return controls ??= new Controls();
+                if (controls == null)
+                {
+                    controls = new Controls();
+                    Debug.Log("New controls baby");
+                }
+                return controls;
             }
         }
 
@@ -22,7 +26,13 @@ namespace Bluaniman.SpaceGame.Player
         public override void OnStartClient()
         {
             OnStartClientWithAuthority();
-            enabled = isOwned;
+            if (isOwned)
+            {
+                Controls.Enable();
+            } else
+            {
+                Controls.Disable();
+            }
         }
 
         protected void BindToInputAction<T>(InputAction inputAction, Action<T> performedAction, Action canceledAction) where T : struct
@@ -30,11 +40,5 @@ namespace Bluaniman.SpaceGame.Player
             inputAction.performed += ctx => performedAction(ctx.ReadValue<T>());
             inputAction.canceled += ctx => canceledAction();
         }
-
-        [ClientCallback]
-        private void OnEnable() => Controls.Enable();
-
-        [ClientCallback]
-        private void OnDisable() => Controls.Disable();
     }
 }

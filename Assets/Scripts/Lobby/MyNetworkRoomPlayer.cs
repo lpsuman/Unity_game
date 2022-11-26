@@ -29,10 +29,14 @@ namespace Bluaniman.SpaceGame.Lobby
 
         public bool IsLeader
         {
+            get
+            {
+                return isLeader;
+            }
             set
             {
                 isLeader = value;
-                startGameButton.gameObject.SetActive(value);
+                startGameButton.interactable = value;
             }
         }
 
@@ -55,6 +59,7 @@ namespace Bluaniman.SpaceGame.Lobby
         public override void OnStartClient()
         {
             lobbyUI.SetActive(isOwned);
+            startGameButton.interactable = false;
             Room.RoomPlayers.Add(this);
             UpdateDisplay();
             if (isOwned && autoReady)
@@ -106,7 +111,7 @@ namespace Bluaniman.SpaceGame.Lobby
 
         public void HandleReadyToStart(bool readyToStart)
         {
-            if (!isLeader) { return; }
+            if (!IsLeader) { return; }
             startGameButton.interactable = readyToStart;
             if (startGameButton.interactable && autoStart && Application.isEditor)
             {

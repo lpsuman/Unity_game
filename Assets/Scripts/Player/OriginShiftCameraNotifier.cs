@@ -1,18 +1,19 @@
 using UnityEngine;
 using Cinemachine;
 using twoloop;
+using Mirror;
 
 namespace Bluaniman.SpaceGame.Player
 {
-	public class OriginShiftCameraNotifier : AbstractLateAfterFixedUpdate
+	public class OriginShiftCameraNotifier : NetworkBehaviour
     {
 		[SerializeField] private CinemachineVirtualCamera virtualCamera = null;
 
-        public override void OnStartClient()
+        public override void OnStartAuthority()
         {
             OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
             {
-                if (wasFixedUpdateCalledThisFrame)
+                if (AfterFixedUpdate.wasFixedUpdateCalledThisFrame)
                 {
                     virtualCamera.OnTargetObjectWarped(transform, Vector3.zero);
                     //Debug.Log("Camera notified.");

@@ -1,11 +1,14 @@
 using System;
 using Bluaniman.SpaceGame.Player;
+using Cinemachine;
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class SpaceshipController : AbstractNetworkController
 {
+    [SerializeField] private CinemachineVirtualCamera virtualCamera = null;
+
     public SpaceshipData spaceshipData;
     private Rigidbody rb;
 
@@ -28,54 +31,52 @@ public class SpaceshipController : AbstractNetworkController
     [SerializeField] private float movementError;
     [SerializeField] private float movementCorrection;
 
-    //[SyncVar(hook = nameof(RotationInputChanged))]
-    //private Vector3 rotationInput = Vector3.zero;
-    [SyncVar(hook = nameof(RotationInputChanged))]
-    private float pitchInput = 0f;
+    [Header("Input debug")]
     [SyncVar]
-    private float yawInput = 0f;
+    [SerializeField] private float pitchInput = 0f;
     [SyncVar]
-    private float rollInput = 0f;
+    [SerializeField] private float yawInput = 0f;
     [SyncVar]
-    private Vector3 thrustInput = Vector3.zero;
+    [SerializeField] private float rollInput = 0f;
+    [SyncVar]
+    [SerializeField] private Vector3 thrustInput = Vector3.zero;
 
     protected override void OnStartClientWithAuthority()
     {
         if (isOwned)
         {
-            BindToInputAction<float>(Controls.Player.Pitch, SetPitchAxisInput, ResetPitchAxisInput);
-            BindToInputAction<float>(Controls.Player.Yaw, SetYawAxisInput, ResetYawAxisInput);
-            BindToInputAction<float>(Controls.Player.Roll, SetRollAxisInput, ResetRollAxisInput);
-            BindToInputAction<float>(Controls.Player.Thrust, SetForwardThrustInput, ResetForwardThrustInput);
+            Debug.Log("Bind them");
+            BindToInputAction<float>(Controls.Player.Pitch, CmdSetPitchAxisInput, CmdResetPitchAxisInput);
+            BindToInputAction<float>(Controls.Player.Yaw, CmdSetYawAxisInput, CmdResetYawAxisInput);
+            BindToInputAction<float>(Controls.Player.Roll, CmdSetRollAxisInput, CmdResetRollAxisInput);
+            BindToInputAction<float>(Controls.Player.Thrust, CmdSetForwardThrustInput, CmdResetForwardThrustInput);
         }
-    }
-
-    private void SetPitchAxisInput(float pitch) => pitchInput = pitch;
-
-    private void ResetPitchAxisInput() => pitchInput = 0f;
-
-    private void SetYawAxisInput(float pitch) => yawInput = pitch;
-
-    private void ResetYawAxisInput() => yawInput = 0f;
-
-    private void SetRollAxisInput(float pitch) => rollInput = pitch;
-
-    private void ResetRollAxisInput() => rollInput = 0f;
-
-    private void SetForwardThrustInput(float pitch) => thrustInput.z = pitch;
-
-    private void ResetForwardThrustInput() => thrustInput.z = 0f;
-
-    private void RotationInputChanged(float oldValue, float newValue)
-    {
-        CmdDebugLogRotationInputChanged(newValue);
+        virtualCamera.gameObject.SetActive(isOwned);
     }
 
     [Command]
-    private void CmdDebugLogRotationInputChanged(float newValue)
-    {
-        Debug.Log($"Rotation input changed: {newValue}");
-    }
+    private void CmdSetPitchAxisInput(float pitch) => pitchInput = pitch;
+
+    [Command]
+    private void CmdResetPitchAxisInput() => pitchInput = 0f;
+
+    [Command]
+    private void CmdSetYawAxisInput(float pitch) => yawInput = pitch;
+
+    [Command]
+    private void CmdResetYawAxisInput() => yawInput = 0f;
+
+    [Command]
+    private void CmdSetRollAxisInput(float pitch) => rollInput = pitch;
+
+    [Command]
+    private void CmdResetRollAxisInput() => rollInput = 0f;
+
+    [Command]
+    private void CmdSetForwardThrustInput(float pitch) => thrustInput.z = pitch;
+
+    [Command]
+    private void CmdResetForwardThrustInput() => thrustInput.z = 0f;
 
     public override void OnStartServer()
     {

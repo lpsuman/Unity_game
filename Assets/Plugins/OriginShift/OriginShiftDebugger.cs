@@ -10,12 +10,13 @@ public class OriginShiftDebugger : MonoBehaviour
             return;
         }
         var g = new GUIStyle();
-        g.normal.textColor = Color.black;
-        GUI.Label(new Rect(10, 370, 300, 20), "Player position: " + OriginShift.singleton.focus.transform.position, g);
+        g.normal.textColor = Color.white;
+        g.fontSize = 42;
+        GUI.Label(new Rect(10, 370, 600, 40), $"Pos: {OriginShift.singleton.focus.transform.position}", g);
 
         if (OriginShift.singleton)
         {
-            GUI.Label(new Rect(10, 400, 1000, 20), "Local Offset (m):  " + OriginShift.LocalOffset.ToString(), g);
+            GUI.Label(new Rect(10, 430, 1000, 40), $"Offset: {OriginShift.LocalOffset.ToVector3()}", g);
         }
     }
 }

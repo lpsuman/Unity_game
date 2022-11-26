@@ -38,7 +38,7 @@ namespace Bluaniman.SpaceGame.Lobby
         private void OnDestroy() => MyNetworkManager.OnServerReadied -= SpawnPlayer;
 
         [Server]
-        public void SpawnPlayer(NetworkConnection conn)
+        public void SpawnPlayer(NetworkConnectionToClient conn)
         {
             Transform spawnPoint = spawnPoints.ElementAtOrDefault(nextIndex);
             if (spawnPoint == null)

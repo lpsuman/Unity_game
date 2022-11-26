@@ -24,7 +24,7 @@ namespace Bluaniman.SpaceGame.Networking
 
         public static event Action OnClientConnected;
         public static event Action OnClientDisconnected;
-        public static event Action<NetworkConnection> OnServerReadied;
+        public static event Action<NetworkConnectionToClient> OnServerReadied;
 
         public List<MyNetworkRoomPlayer> RoomPlayers { get; } = new();
         public List<MyNetworkGamePlayer> GamePlayers { get; } = new();

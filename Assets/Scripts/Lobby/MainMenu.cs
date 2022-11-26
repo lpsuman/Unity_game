@@ -21,19 +21,18 @@ namespace Bluaniman.SpaceGame.Lobby
 
         private void Start()
         {
+            nameInputPanel.SetActive(true);
+            landingPanel.SetActive(false);
+            ipAddressInputPanel.SetActive(false);
             if (autoHost && Application.isEditor)
             {
                 confirmNameButton.onClick.Invoke();
                 hostButton.onClick.Invoke();
                 return;
             }
-            nameInputPanel.SetActive(true);
-            landingPanel.SetActive(false);
-            ipAddressInputPanel.SetActive(false);
         }
         public void HostLobby()
         {
-            //Debug.Log("Starting host");
             networkManager.StartHost();
             landingPanel.SetActive(false);
         }

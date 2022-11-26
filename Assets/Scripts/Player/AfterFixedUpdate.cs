@@ -1,11 +1,12 @@
 using System.Collections;
 using UnityEngine;
-using Mirror;
 
 namespace Bluaniman.SpaceGame.Player
 {
-	public class AbstractLateAfterFixedUpdate : NetworkBehaviour
+	public class AfterFixedUpdate : MonoBehaviour
     {
+        public static bool wasFixedUpdateCalledThisFrame = false;
+
         private IEnumerator WaitEndOfFrame()
         {
             yield return waitForEndOfFrame;
@@ -13,9 +14,7 @@ namespace Bluaniman.SpaceGame.Player
         }
 
         private readonly YieldInstruction waitForEndOfFrame = new WaitForEndOfFrame();
-        protected bool wasFixedUpdateCalledThisFrame = false;
 
-        [ClientCallback]
         public void FixedUpdate()
         {
             wasFixedUpdateCalledThisFrame = true;
