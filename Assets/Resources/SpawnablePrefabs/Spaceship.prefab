@@ -295,7 +295,6 @@ GameObject:
   - component: {fileID: 3075203574099729419}
   - component: {fileID: 2999575278672236875}
   - component: {fileID: 2299859144026722099}
-  - component: {fileID: 5892311159560857662}
   m_Layer: 29
   m_Name: Spaceship
   m_TagString: Untagged
@@ -389,7 +388,7 @@ MonoBehaviour:
   syncInterval: 0.02
   targetRb: {fileID: 3075203574099729419}
   serverOnlyPhysics: 1
-  clientAuthority: 1
+  clientAuthority: 0
   isAutoFocus: 0
   lerpPositionAmount: 0.2
   lerpRotationAmount: 0.1
@@ -409,6 +408,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  useAuthorityPhysics: 0
+  osNetTransform: {fileID: 7962293919462791176}
+  osNetRb: {fileID: 2999575278672236875}
   virtualCamera: {fileID: 7351524879803008780}
   spaceshipData: {fileID: 11400000, guid: 557669193e0f0954d9c5ae595a1ba074, type: 2}
   angularPIDstartingP: 10
@@ -421,19 +423,7 @@ MonoBehaviour:
   movementPIDstartingD: 0.01
   movementError: 0
   movementCorrection: 0
---- !u!114 &5892311159560857662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8018749676320522877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fece43edf199fc84097b38e9c5058de1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
-  virtualCamera: {fileID: 7351524879803008780}
+  pitchInput: 0
+  yawInput: 0
+  rollInput: 0
+  thrustInput: 0

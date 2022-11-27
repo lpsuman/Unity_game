@@ -28,6 +28,11 @@ namespace Bluaniman.SpaceGame.Debugging
             this.suffix = suffix;
         }
 
+        private void Start()
+        {
+            enabled = DebugHandler.ShouldDebug(DebugHandler.updateOrder);
+        }
+
         private void DoLog(string prefix)
         {
             if (optionalTransformToLog == null)
@@ -41,11 +46,9 @@ namespace Bluaniman.SpaceGame.Debugging
 
         private void DoPause()
         {
-            Debug.Log("Lol Debug.Break is useless.");
-            //Debug.Break();
+            
         }
 
-        [ServerCallback]
         public void Update()
         {
             if (logUpdate)
@@ -63,7 +66,6 @@ namespace Bluaniman.SpaceGame.Debugging
 
         }
 
-        [ServerCallback]
         public void FixedUpdate()
         {
             if (logFixed)
@@ -82,7 +84,6 @@ namespace Bluaniman.SpaceGame.Debugging
 
         }
 
-        [ServerCallback]
         public void LateUpdate()
         {
             if (logLate)

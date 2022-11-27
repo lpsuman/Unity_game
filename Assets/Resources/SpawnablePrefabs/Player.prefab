@@ -287,8 +287,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8349793143720051954}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.098537624, y: 0.000000005227375, z: -5.176121e-10, w: 0.99513334}
+  m_LocalPosition: {x: 0, y: 3, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -376,7 +376,6 @@ GameObject:
   - component: {fileID: 934407267311525200}
   - component: {fileID: 3884638003406430617}
   - component: {fileID: 6243724275363569830}
-  - component: {fileID: 6710732936666285206}
   - component: {fileID: 4961021348583769026}
   m_Layer: 0
   m_Name: Player
@@ -465,24 +464,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &6710732936666285206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8503172679553804092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc07ba3a8e3bcac488f96645f34c889c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
-  maxFollowOffset: {x: -1, y: 6}
-  cameraVelocity: {x: 4, y: 0.25}
-  virtualCamera: {fileID: 186897446280561829}
 --- !u!114 &4961021348583769026
 MonoBehaviour:
   m_ObjectHideFlags: 0

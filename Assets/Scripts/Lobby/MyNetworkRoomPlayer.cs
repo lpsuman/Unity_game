@@ -4,6 +4,7 @@ using Mirror;
 using Bluaniman.SpaceGame.Networking;
 using TMPro;
 using UnityEngine.UI;
+using Bluaniman.SpaceGame.Debugging;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
@@ -16,8 +17,6 @@ namespace Bluaniman.SpaceGame.Lobby
         [SerializeField] private Button startGameButton = null;
 
         [Header("Debug")]
-        [SerializeField] private bool autoReady = false;
-        [SerializeField] private bool autoStart = false;
         [SerializeField] private Button readyButton = null;
 
         [SyncVar(hook = nameof(HandleDisplayNameChanged))]
@@ -62,7 +61,7 @@ namespace Bluaniman.SpaceGame.Lobby
             startGameButton.interactable = false;
             Room.RoomPlayers.Add(this);
             UpdateDisplay();
-            if (isOwned && autoReady)
+            if (isOwned && DebugHandler.autoReady)
             {
                 readyButton.onClick.Invoke();
             }
@@ -113,7 +112,9 @@ namespace Bluaniman.SpaceGame.Lobby
         {
             if (!IsLeader) { return; }
             startGameButton.interactable = readyToStart;
-            if (startGameButton.interactable && autoStart && Application.isEditor)
+            if (startGameButton.interactable && 
+                   (DebugHandler.ShouldDebug(DebugHandler.autoStart)
+                || (DebugHandler.ShouldDebug(DebugHandler.autoStart) && Room.RoomPlayers.Count > 1)))
             {
                 startGameButton.onClick.Invoke();
             }

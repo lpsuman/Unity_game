@@ -6,12 +6,15 @@ namespace Bluaniman.SpaceGame.Debugging
 {
 	public class OriginShiftLogger : NetworkBehaviour
 	{
-        public override void OnStartServer()
+        private void Start()
         {
-            OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
+            if (DebugHandler.ShouldDebug(DebugHandler.originShift))
             {
-                Debug.Log($"Origin shifted by {shiftVector}");
-            });
+                OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
+                {
+                    Debug.Log($"Origin shifted by {shiftVector}");
+                });
+            }
         }
     }
 }

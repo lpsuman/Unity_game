@@ -8,6 +8,7 @@ namespace Bluaniman.SpaceGame.Player
 {
 	public abstract class AbstractNetworkController : NetworkBehaviour
 	{
+        [SerializeField] protected bool useAuthorityPhysics = true;
         private Controls controls;
         protected Controls Controls
         {
@@ -16,7 +17,7 @@ namespace Bluaniman.SpaceGame.Player
                 if (controls == null)
                 {
                     controls = new Controls();
-                    Debug.Log("New controls baby");
+                    //Debug.Log("New controls baby");
                 }
                 return controls;
             }
@@ -35,10 +36,12 @@ namespace Bluaniman.SpaceGame.Player
             }
         }
 
-        protected void BindToInputAction<T>(InputAction inputAction, Action<T> performedAction, Action canceledAction) where T : struct
+        protected void BindToInputAction<T>(InputAction inputAction, Action<T> performedAction, Action<T> performedCmd, Action canceledAction, Action canceledCmd) where T : struct
         {
             inputAction.performed += ctx => performedAction(ctx.ReadValue<T>());
+            inputAction.performed += ctx => performedCmd(ctx.ReadValue<T>());
             inputAction.canceled += ctx => canceledAction();
+            inputAction.canceled += ctx => canceledCmd();
         }
     }
 }

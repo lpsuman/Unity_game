@@ -2,13 +2,15 @@ using System;
 using Bluaniman.SpaceGame.Player;
 using Cinemachine;
 using Mirror;
+using twoloop;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class SpaceshipController : AbstractNetworkController
 {
+    [SerializeField] private OSNetTransform osNetTransform = null;
+    [SerializeField] private OSNetRigidbody osNetRb = null;
     [SerializeField] private CinemachineVirtualCamera virtualCamera = null;
-
     public SpaceshipData spaceshipData;
     private Rigidbody rb;
 
@@ -39,50 +41,73 @@ public class SpaceshipController : AbstractNetworkController
     [SyncVar]
     [SerializeField] private float rollInput = 0f;
     [SyncVar]
-    [SerializeField] private Vector3 thrustInput = Vector3.zero;
+    [SerializeField] private float thrustInput = 0f;
 
     protected override void OnStartClientWithAuthority()
     {
         if (isOwned)
         {
-            Debug.Log("Bind them");
-            BindToInputAction<float>(Controls.Player.Pitch, CmdSetPitchAxisInput, CmdResetPitchAxisInput);
-            BindToInputAction<float>(Controls.Player.Yaw, CmdSetYawAxisInput, CmdResetYawAxisInput);
-            BindToInputAction<float>(Controls.Player.Roll, CmdSetRollAxisInput, CmdResetRollAxisInput);
-            BindToInputAction<float>(Controls.Player.Thrust, CmdSetForwardThrustInput, CmdResetForwardThrustInput);
+            //Debug.Log("Bind them");
+            BindToInputAction<float>(Controls.Player.Pitch, SetPitchInput, CmdSetPitchAxisInput, ResetPitchAxisInput, CmdResetPitchAxisInput);
+            BindToInputAction<float>(Controls.Player.Yaw, SetYawAxisInput, CmdSetYawAxisInput, ResetYawAxisInput, CmdResetYawAxisInput);
+            BindToInputAction<float>(Controls.Player.Roll, SetRollAxisInput, CmdSetRollAxisInput, ResetRollAxisInput, CmdResetRollAxisInput);
+            BindToInputAction<float>(Controls.Player.Thrust, SetForwardThrustInput, CmdSetForwardThrustInput, ResetForwardThrustInput, CmdResetForwardThrustInput);
         }
         virtualCamera.gameObject.SetActive(isOwned);
     }
 
+    private void SetPitchInput(float pitch)
+    {
+        pitchInput = pitch;
+        //Debug.Log($"Pitch = {pitchInput}, isServer = {isServer}, isOwned = {isOwned}");
+    }
     [Command]
-    private void CmdSetPitchAxisInput(float pitch) => pitchInput = pitch;
+    private void CmdSetPitchAxisInput(float pitch) => SetPitchInput(pitch);
 
+    private void ResetPitchAxisInput() => pitchInput = 0f;
     [Command]
-    private void CmdResetPitchAxisInput() => pitchInput = 0f;
+    private void CmdResetPitchAxisInput() => ResetPitchAxisInput();
 
+    private void SetYawAxisInput(float pitch) => yawInput = pitch;
     [Command]
-    private void CmdSetYawAxisInput(float pitch) => yawInput = pitch;
+    private void CmdSetYawAxisInput(float pitch) => SetYawAxisInput(pitch);
 
+    private void ResetYawAxisInput() => yawInput = 0f;
     [Command]
-    private void CmdResetYawAxisInput() => yawInput = 0f;
+    private void CmdResetYawAxisInput() => ResetYawAxisInput();
 
+    private void SetRollAxisInput(float pitch) => rollInput = pitch;
     [Command]
-    private void CmdSetRollAxisInput(float pitch) => rollInput = pitch;
+    private void CmdSetRollAxisInput(float pitch) => SetRollAxisInput(pitch);
 
+    private void ResetRollAxisInput() => rollInput = 0f;
     [Command]
-    private void CmdResetRollAxisInput() => rollInput = 0f;
+    private void CmdResetRollAxisInput() => ResetRollAxisInput();
 
+    private void SetForwardThrustInput(float pitch) => thrustInput = pitch;
     [Command]
-    private void CmdSetForwardThrustInput(float pitch) => thrustInput.z = pitch;
+    private void CmdSetForwardThrustInput(float pitch) => SetForwardThrustInput(pitch);
 
+    private void ResetForwardThrustInput() => thrustInput = 0f;
     [Command]
-    private void CmdResetForwardThrustInput() => thrustInput.z = 0f;
+    private void CmdResetForwardThrustInput() => ResetForwardThrustInput();
 
-    public override void OnStartServer()
+    public void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.mass = spaceshipData.mass;
         rb.useGravity = false;
+        if (isServer || (isClientOnly && useAuthorityPhysics))
+        {
+            DoSetup();
+        }
+        osNetTransform.clientAuthority = useAuthorityPhysics;
+        osNetRb.clientAuthority = useAuthorityPhysics;
+        osNetRb.serverOnlyPhysics = !useAuthorityPhysics;
+    }
+
+    private void DoSetup()
+    {
         angularPID = new PID(angularPIDstartingP, angularPIDstartingI, angularPIDstartingD);
         isStoppingRotation = false;
         wasRotationAxisInputPresentLastUpdate = false;
@@ -90,15 +115,15 @@ public class SpaceshipController : AbstractNetworkController
         isStoppingMovement = false;
     }
 
-    [ServerCallback]
     private void FixedUpdate()
     {
+        //Debug.Log($"Let's move! isClient ={isClientOnly}, useAuthPhys={useAuthorityPhysics}, isOwned={isOwned}");
+        if (isClientOnly && (!useAuthorityPhysics || !isOwned)) { return; }
         Turn();
         Strafe();
         Thrust();
     }
 
-    [Server]
     private void Turn()
     {
         float deltaTimeRotationThrust = spaceshipData.rotationThrust * Time.fixedDeltaTime;
@@ -135,16 +160,14 @@ public class SpaceshipController : AbstractNetworkController
         wasRotationAxisInputPresentLastUpdate = isAxisInputPresent;
     }
 
-    [Server]
     private void Strafe()
     {
         // TODO
     }
 
-    [Server]
     private void Thrust()
     {
-        if (thrustInput.z < 0f)
+        if (thrustInput < 0f)
         {
             if (!isStoppingMovement)
             {
@@ -167,21 +190,9 @@ public class SpaceshipController : AbstractNetworkController
         }
         else
         {
-            //if (Input.GetKey(toggleStrafeKeyID))
-            //{
-            //    float deltaTimeStrafeThrust = spaceshipData.strafeThrust * Time.fixedDeltaTime;
-            //    if (inputAxisVertical != 0.0f)
-            //    {
-            //        rb.AddRelativeForce(inputAxisVertical * deltaTimeStrafeThrust * Vector3.right);
-            //    }
-            //    if (inputAxisHorizontal != 0.0f)
-            //    {
-            //        rb.AddRelativeForce(inputAxisHorizontal * deltaTimeStrafeThrust * Vector3.up);
-            //    }
-            //}
-            if (thrustInput.z != 0.0f)
+            if (thrustInput != 0.0f)
             {
-                rb.AddRelativeForce(thrustInput.z * deltaTimeForwardThrust * Vector3.forward);
+                rb.AddRelativeForce(thrustInput * deltaTimeForwardThrust * Vector3.forward);
             }
         }
         

@@ -1,6 +1,7 @@
 using UnityEngine;
 using Cinemachine;
 using twoloop;
+using Bluaniman.SpaceGame.Debugging;
 
 namespace Bluaniman.SpaceGame.Player
 {
@@ -14,8 +15,12 @@ namespace Bluaniman.SpaceGame.Player
             {
                 if (AfterFixedUpdate.wasFixedUpdateCalledThisFrame)
                 {
+                    ICinemachineCamera vcam = cinemachineBrain.ActiveVirtualCamera;
+                    vcam.OnTargetObjectWarped(vcam.Follow, Vector3.zero);
                     cinemachineBrain.ManualUpdate();
-                    //Debug.Log("Brain notified.");
+                    if (DebugHandler.ShouldDebug(DebugHandler.cinemachineBrainUpdating)) {
+                        Debug.Log("Brain notified.");
+                    }
                 }
             });
         }
@@ -23,6 +28,10 @@ namespace Bluaniman.SpaceGame.Player
         public void FixedUpdate()
         {
             cinemachineBrain.ManualUpdate();
+            if (DebugHandler.ShouldDebug(DebugHandler.cinemachineBrainUpdating))
+            {
+                Debug.Log("Brain fixed update.");
+            }
         }
     }
 }
