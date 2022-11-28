@@ -48,7 +48,9 @@ MonoBehaviour:
   updateOrderSH: 1
   originShiftSH: 1
   cinemachineBrainUpdatingSH: 1
-  autoHostSH: 1
-  autoReadySH: 1
-  autoStartSH: 1
-  autoStartNotAloneSH: 0
+  mainMenuSH: 0
+  autoHostSH: 0
+  autoJoinSH: 2
+  autoReadySH: 3
+  autoStartSH: 0
+  autoStartNotAloneSH: 3

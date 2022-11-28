@@ -1,6 +1,7 @@
 using UnityEngine;
 using twoloop;
 using Mirror;
+using System.ComponentModel;
 
 namespace Bluaniman.SpaceGame.Debugging
 {
@@ -8,12 +9,24 @@ namespace Bluaniman.SpaceGame.Debugging
 	{
         private void Start()
         {
-            if (DebugHandler.ShouldDebug(DebugHandler.originShift))
+            switch (DebugHandler.originShift)
             {
-                OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
-                {
-                    Debug.Log($"Origin shifted by {shiftVector}");
-                });
+                case DebugHandler.OriginShiftLoggingMode.Disabled:
+                    break;
+                case DebugHandler.OriginShiftLoggingMode.OnlyOnChange:
+                    OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
+                    {
+                        Debug.Log($"Origin changed and shifted by {shiftVector}");
+                    });
+                    break;
+                case DebugHandler.OriginShiftLoggingMode.Always:
+                    OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
+                    {
+                        Debug.Log($"Origin shifted by {shiftVector}");
+                    });
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException();
             }
         }
     }

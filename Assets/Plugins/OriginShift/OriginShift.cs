@@ -549,10 +549,11 @@ namespace twoloop
             var rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
             foreach (var item in rootGameObjects)
             {
-                //if (item.layer == 29 && item.transform.position.x != 0f) {
-                //    bool owned = item.GetComponent<Mirror.NetworkIdentity>().isOwned;
-                //    Debug.Log($"Pos = {item.transform.position}\nFocus = {_focusPosition}\nOwned = {owned}");
-                //}
+                if (item.layer == 29 && item.transform.position.x != 0f)
+                {
+                    bool owned = item.GetComponent<Mirror.NetworkIdentity>().isOwned;
+                    Debug.Log($"Pos = {item.transform.position}\nFocus = {_focusPosition}\nOwned = {owned}");
+                }
                 item.transform.position -= _focusPosition;
             }
 

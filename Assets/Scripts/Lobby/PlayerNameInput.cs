@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Bluaniman.SpaceGame.Debugging;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
@@ -17,16 +18,20 @@ namespace Bluaniman.SpaceGame.Lobby
 
         private void Start()
         {
-            playerNamePanel.SetActive(false);
             SetUpInputField();
+            playerNamePanel.SetActive(false);
         }
 
         private void SetUpInputField()
         {
-            if (!PlayerPrefs.HasKey(PlayerPrefsNameKey)) { return; }
+            if (!PlayerPrefs.HasKey(PlayerPrefsNameKey)) {
+                DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, "No default player name found!");
+                return;
+            }
             string defaultName = PlayerPrefs.GetString(PlayerPrefsNameKey);
             nameInputField.text = defaultName;
             SetPlayerName(defaultName);
+            DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, $"Default player name set as {defaultName}.");
         }
 
         public void SetPlayerName(string name)
@@ -40,6 +45,7 @@ namespace Bluaniman.SpaceGame.Lobby
             PlayerPrefs.SetString(PlayerPrefsNameKey, DisplayName);
             playerNamePanel.SetActive(true);
             playerNameTextField.text = DisplayName;
+            DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, $"Saved player's name as {DisplayName}.");
         }
     }
 }

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CorvetteData
   m_EditorClassIdentifier: 
   mass: 10
-  forwardThrust: 100000
+  forwardThrust: 100000000
   rotationThrust: 5000
   strafeThrust: 1000

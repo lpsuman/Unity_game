@@ -389,7 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76d9dbb8269451145b6d72e4c852ccaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  focus: {fileID: 0}
+  focus: {fileID: 723223350}
   networkOS: {fileID: 723223351}
   precisionMode: 2
   isContinuous: 1
@@ -5408,7 +5408,7 @@ MonoBehaviour:
   m_ShowCameraFrustum: 1
   m_IgnoreTimeScale: 0
   m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 3
+  m_UpdateMethod: 1
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
     m_Style: 0
@@ -5433,7 +5433,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39e3cef6e1d493b448678b50bb0f5253, type: 3}
   m_Name: 
@@ -15903,15 +15903,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2840308821958497915, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.38268343
+      value: 0.92387956
       objectReference: {fileID: 0}
     - target: {fileID: 2840308821958497915, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.92387956
+      value: 0.38268343
       objectReference: {fileID: 0}
     - target: {fileID: 2840308821958497915, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -135
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 2840308822103766853, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15923,15 +15923,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2840308822103766853, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.92387956
-      objectReference: {fileID: 0}
-    - target: {fileID: 2840308822103766853, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
-      propertyPath: m_LocalRotation.y
       value: 0.38268343
       objectReference: {fileID: 0}
     - target: {fileID: 2840308822103766853, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.92387956
+      objectReference: {fileID: 0}
+    - target: {fileID: 2840308822103766853, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 45
+      value: -135
       objectReference: {fileID: 0}
     - target: {fileID: 2840308822904709293, guid: aefe0c24d9e5ed041bed2c0f49f5564a, type: 3}
       propertyPath: m_LocalRotation.w

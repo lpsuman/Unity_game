@@ -176,6 +176,7 @@ GameObject:
   - component: {fileID: 214824682}
   - component: {fileID: 214824681}
   - component: {fileID: 214824680}
+  - component: {fileID: 214824683}
   m_Layer: 0
   m_Name: Network Manager
   m_TagString: Untagged
@@ -231,7 +232,7 @@ MonoBehaviour:
   sendRate: 30
   offlineScene: 
   onlineScene: 
-  transport: {fileID: 214824680}
+  transport: {fileID: 214824683}
   networkAddress: localhost
   maxConnections: 4
   authenticator: {fileID: 0}
@@ -259,6 +260,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &214824683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214824679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96b149f511061407fb54895c057b7736, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wrap: {fileID: 214824680}
+  jitter: 0
+  jitterSpeed: 1
+  reliableLatency: 0.2
+  unreliableLoss: 0.01
+  unreliableLatency: 0.2
+  unreliableScramble: 0
 --- !u!1001 &387416415
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -549,7 +569,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &453956567
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1496,7 +1516,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1373288799
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2035,6 +2055,8 @@ MonoBehaviour:
   ipAddressInputPanel: {fileID: 1008939698}
   confirmNameButton: {fileID: 1044166831}
   hostButton: {fileID: 985765608}
+  joinButton: {fileID: 1907241432}
+  confirmIpButton: {fileID: 788142614}
 --- !u!1001 &1804553101
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2306,6 +2328,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3089873517925889744, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
   m_PrefabInstance: {fileID: 1907241430}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1907241432 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8853439500574290036, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
+  m_PrefabInstance: {fileID: 1907241430}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1980112503
 GameObject:
   m_ObjectHideFlags: 0

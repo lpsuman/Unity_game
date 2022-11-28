@@ -4,7 +4,6 @@ using Cinemachine;
 using Mirror;
 using twoloop;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class SpaceshipController : AbstractNetworkController
 {
@@ -14,6 +13,7 @@ public class SpaceshipController : AbstractNetworkController
     public SpaceshipData spaceshipData;
     private Rigidbody rb;
 
+    [Header("Rotation PID")]
     private PID angularPID;
     [SerializeField] private float angularPIDstartingP = 10.0f;
     [SerializeField] private float angularPIDstartingI = 0.0f;
@@ -24,6 +24,7 @@ public class SpaceshipController : AbstractNetworkController
     [SerializeField] private float angularVelocityError;
     [SerializeField] private float angularVelocityCorrection;
 
+    [Header("Movement PID")]
     private PID movementPID;
     [SerializeField] private float movementPIDstartingP = 1.0f;
     [SerializeField] private float movementPIDstartingI = 0.0f;
@@ -47,7 +48,6 @@ public class SpaceshipController : AbstractNetworkController
     {
         if (isOwned)
         {
-            //Debug.Log("Bind them");
             BindToInputAction<float>(Controls.Player.Pitch, SetPitchInput, CmdSetPitchAxisInput, ResetPitchAxisInput, CmdResetPitchAxisInput);
             BindToInputAction<float>(Controls.Player.Yaw, SetYawAxisInput, CmdSetYawAxisInput, ResetYawAxisInput, CmdResetYawAxisInput);
             BindToInputAction<float>(Controls.Player.Roll, SetRollAxisInput, CmdSetRollAxisInput, ResetRollAxisInput, CmdResetRollAxisInput);
@@ -56,11 +56,7 @@ public class SpaceshipController : AbstractNetworkController
         virtualCamera.gameObject.SetActive(isOwned);
     }
 
-    private void SetPitchInput(float pitch)
-    {
-        pitchInput = pitch;
-        //Debug.Log($"Pitch = {pitchInput}, isServer = {isServer}, isOwned = {isOwned}");
-    }
+    private void SetPitchInput(float pitch) => pitchInput = pitch;
     [Command]
     private void CmdSetPitchAxisInput(float pitch) => SetPitchInput(pitch);
 
@@ -108,6 +104,7 @@ public class SpaceshipController : AbstractNetworkController
 
     private void DoSetup()
     {
+        rb.isKinematic = false;
         angularPID = new PID(angularPIDstartingP, angularPIDstartingI, angularPIDstartingD);
         isStoppingRotation = false;
         wasRotationAxisInputPresentLastUpdate = false;
@@ -117,7 +114,6 @@ public class SpaceshipController : AbstractNetworkController
 
     private void FixedUpdate()
     {
-        //Debug.Log($"Let's move! isClient ={isClientOnly}, useAuthPhys={useAuthorityPhysics}, isOwned={isOwned}");
         if (isClientOnly && (!useAuthorityPhysics || !isOwned)) { return; }
         Turn();
         Strafe();

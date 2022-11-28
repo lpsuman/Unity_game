@@ -61,7 +61,7 @@ namespace Bluaniman.SpaceGame.Lobby
             startGameButton.interactable = false;
             Room.RoomPlayers.Add(this);
             UpdateDisplay();
-            if (isOwned && DebugHandler.autoReady)
+            if (isOwned && DebugHandler.ShouldAutoLobbyAction(DebugHandler.autoReady))
             {
                 readyButton.onClick.Invoke();
             }
@@ -113,8 +113,8 @@ namespace Bluaniman.SpaceGame.Lobby
             if (!IsLeader) { return; }
             startGameButton.interactable = readyToStart;
             if (startGameButton.interactable && 
-                   (DebugHandler.ShouldDebug(DebugHandler.autoStart)
-                || (DebugHandler.ShouldDebug(DebugHandler.autoStart) && Room.RoomPlayers.Count > 1)))
+                   (DebugHandler.ShouldAutoLobbyAction(DebugHandler.autoStart)
+                || (DebugHandler.ShouldAutoLobbyAction(DebugHandler.autoStartNotAlone) && Room.RoomPlayers.Count > 1)))
             {
                 startGameButton.onClick.Invoke();
             }
