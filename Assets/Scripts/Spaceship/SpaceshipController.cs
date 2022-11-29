@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Bluaniman.SpaceGame.Player;
 using Cinemachine;
 using Mirror;
@@ -7,6 +8,8 @@ using UnityEngine;
 
 public class SpaceshipController : AbstractNetworkController
 {
+    private const float secondsBeforeStarting = 3f;
+
     [SerializeField] private OSNetTransform osNetTransform = null;
     [SerializeField] private OSNetRigidbody osNetRb = null;
     [SerializeField] private CinemachineVirtualCamera virtualCamera = null;
@@ -90,6 +93,11 @@ public class SpaceshipController : AbstractNetworkController
 
     public void Start()
     {
+        Invoke(nameof(DelayedStart), secondsBeforeStarting);
+    }
+
+    private void DelayedStart()
+    {
         rb = GetComponent<Rigidbody>();
         rb.mass = spaceshipData.mass;
         rb.useGravity = false;
@@ -100,6 +108,11 @@ public class SpaceshipController : AbstractNetworkController
         osNetTransform.clientAuthority = useAuthorityPhysics;
         osNetRb.clientAuthority = useAuthorityPhysics;
         osNetRb.serverOnlyPhysics = !useAuthorityPhysics;
+
+        //osNetTransform.clientAuthority = false;
+        //osNetRb.clientAuthority = false;
+        //osNetRb.serverOnlyPhysics = true;
+        //rb.isKinematic = !useAuthorityPhysics;
     }
 
     private void DoSetup()

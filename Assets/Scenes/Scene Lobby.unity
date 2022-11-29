@@ -275,9 +275,9 @@ MonoBehaviour:
   wrap: {fileID: 214824680}
   jitter: 0
   jitterSpeed: 1
-  reliableLatency: 0.2
+  reliableLatency: 0.1
   unreliableLoss: 0.01
-  unreliableLatency: 0.2
+  unreliableLatency: 0.1
   unreliableScramble: 0
 --- !u!1001 &387416415
 PrefabInstance:

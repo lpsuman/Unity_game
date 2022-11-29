@@ -47,9 +47,9 @@ MonoBehaviour:
   isDebugEnabledSH: 1
   updateOrderSH: 1
   originShiftSH: 1
-  cinemachineBrainUpdatingSH: 1
+  cinemachineBrainUpdatingSH: 0
   mainMenuSH: 0
-  autoHostSH: 0
+  autoHostSH: 1
   autoJoinSH: 2
   autoReadySH: 3
   autoStartSH: 0
