@@ -49,8 +49,8 @@ MonoBehaviour:
   originShiftSH: 1
   cinemachineBrainUpdatingSH: 0
   mainMenuSH: 0
-  autoHostSH: 1
-  autoJoinSH: 2
+  autoHostSH: 2
+  autoJoinSH: 1
   autoReadySH: 3
   autoStartSH: 0
   autoStartNotAloneSH: 3

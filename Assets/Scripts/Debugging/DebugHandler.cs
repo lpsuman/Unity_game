@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 
 namespace Bluaniman.SpaceGame.Debugging
@@ -32,6 +33,14 @@ namespace Bluaniman.SpaceGame.Debugging
 		[SerializeField] private bool mainMenuSH;
 		public static bool mainMenu = false;
 
+		[Header("Network debug")]
+		[SerializeField] private bool serverMessagesSH;
+		public static bool serverMessages = false;
+		[SerializeField] private bool remoteClientMessagesSH;
+		public static bool remoteClientMessages = false;
+		[SerializeField] private bool hostClientMessagesSH;
+		public static bool hostClientMessages = false;
+
 		[Header("Lobby")]
 		[SerializeField] private AutoLobbyAction autoHostSH;
 		public static AutoLobbyAction autoHost = AutoLobbyAction.Disabled;
@@ -53,6 +62,10 @@ namespace Bluaniman.SpaceGame.Debugging
 			cinemachineBrainUpdating = cinemachineBrainUpdatingSH;
 			mainMenu = mainMenuSH;
 
+			serverMessages = serverMessagesSH;
+			remoteClientMessages = remoteClientMessagesSH;
+			hostClientMessages = hostClientMessagesSH;
+
 			autoHost = autoHostSH;
 			autoJoin = autoJoinSH;
 			autoReady = autoReadySH;
@@ -60,14 +73,14 @@ namespace Bluaniman.SpaceGame.Debugging
 			autoStartNotAlone = autoStartNotAloneSH;
 		}
 
-		public static bool ShouldDebug(bool additionalCondition)
+		public static bool ShouldDebug(bool additionalCondition = true)
         {
 			return isDebugEnabled && Application.isEditor && additionalCondition;
 		}
 
 		public static bool ShouldAutoLobbyAction(AutoLobbyAction lobbyAction)
 		{
-			if (!isDebugEnabled)
+			if (!ShouldDebug())
 			{
 				return false;
 			}
@@ -79,15 +92,47 @@ namespace Bluaniman.SpaceGame.Debugging
 			{
 				return true;
 			}
+			// using logical XOR to simplify the IF statement
 			else return Application.isEditor ^ lobbyAction == AutoLobbyAction.NonEditor;
 		}
 
-		public static void CheckAndDebugLog(bool additionalCondition, string debugMsg)
+		public static void CheckAndDebugLog(bool additionalCondition, string debugMsg, NetworkBehaviour networkContext = null)
         {
 			if (ShouldDebug(additionalCondition))
             {
-				Debug.Log(debugMsg);
+				NetworkLog(debugMsg, networkContext);
             }
+        }
+
+		public static void NetworkLog(string debugMsg, NetworkBehaviour networkContext = null)
+		{
+			if (!ShouldDebug()) { return; }
+			if (networkContext == null)
+            {
+				Debug.Log($"{debugMsg}\nNo network context was provided.");
+            }
+			else if ((networkContext.isServer && serverMessages)
+				|| (networkContext.isServer && networkContext.isClient && hostClientMessages))
+            {
+				Log(debugMsg, networkContext);
+			}
+			else if (networkContext.isClientOnly && remoteClientMessages)
+            {
+				CmdLog(debugMsg, networkContext);
+            }
+
+
+		}
+
+		private static void Log(string debugMsg, NetworkBehaviour networkContext)
+        {
+			Debug.Log($"{debugMsg}\nisServer={networkContext.isServer} isClient={networkContext.isClient} isOwned={networkContext.isOwned}");
+		}
+
+		// TODO implement as network message
+		private static void CmdLog(string debugMsg, NetworkBehaviour networkContext)
+        {
+			Log(debugMsg, networkContext);
         }
 
         private void Start()

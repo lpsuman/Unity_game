@@ -13,7 +13,7 @@ namespace Bluaniman.SpaceGame.Player
 
 		private Vector2 previousInput;
 
-        protected override void OnStartClientWithAuthority()
+        public override void OnStartClient()
         {
             if (isOwned)
             {

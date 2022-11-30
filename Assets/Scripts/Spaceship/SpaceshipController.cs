@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using Bluaniman.SpaceGame.Debugging;
 using Bluaniman.SpaceGame.Player;
 using Cinemachine;
 using Mirror;
@@ -37,62 +37,23 @@ public class SpaceshipController : AbstractNetworkController
     [SerializeField] private float movementError;
     [SerializeField] private float movementCorrection;
 
-    [Header("Input debug")]
-    [SyncVar]
-    [SerializeField] private float pitchInput = 0f;
-    [SyncVar]
-    [SerializeField] private float yawInput = 0f;
-    [SyncVar]
-    [SerializeField] private float rollInput = 0f;
-    [SyncVar]
-    [SerializeField] private float thrustInput = 0f;
-
-    protected override void OnStartClientWithAuthority()
-    {
-        if (isOwned)
-        {
-            BindToInputAction<float>(Controls.Player.Pitch, SetPitchInput, CmdSetPitchAxisInput, ResetPitchAxisInput, CmdResetPitchAxisInput);
-            BindToInputAction<float>(Controls.Player.Yaw, SetYawAxisInput, CmdSetYawAxisInput, ResetYawAxisInput, CmdResetYawAxisInput);
-            BindToInputAction<float>(Controls.Player.Roll, SetRollAxisInput, CmdSetRollAxisInput, ResetRollAxisInput, CmdResetRollAxisInput);
-            BindToInputAction<float>(Controls.Player.Thrust, SetForwardThrustInput, CmdSetForwardThrustInput, ResetForwardThrustInput, CmdResetForwardThrustInput);
-        }
-        virtualCamera.gameObject.SetActive(isOwned);
-    }
-
-    private void SetPitchInput(float pitch) => pitchInput = pitch;
-    [Command]
-    private void CmdSetPitchAxisInput(float pitch) => SetPitchInput(pitch);
-
-    private void ResetPitchAxisInput() => pitchInput = 0f;
-    [Command]
-    private void CmdResetPitchAxisInput() => ResetPitchAxisInput();
-
-    private void SetYawAxisInput(float pitch) => yawInput = pitch;
-    [Command]
-    private void CmdSetYawAxisInput(float pitch) => SetYawAxisInput(pitch);
-
-    private void ResetYawAxisInput() => yawInput = 0f;
-    [Command]
-    private void CmdResetYawAxisInput() => ResetYawAxisInput();
-
-    private void SetRollAxisInput(float pitch) => rollInput = pitch;
-    [Command]
-    private void CmdSetRollAxisInput(float pitch) => SetRollAxisInput(pitch);
-
-    private void ResetRollAxisInput() => rollInput = 0f;
-    [Command]
-    private void CmdResetRollAxisInput() => ResetRollAxisInput();
-
-    private void SetForwardThrustInput(float pitch) => thrustInput = pitch;
-    [Command]
-    private void CmdSetForwardThrustInput(float pitch) => SetForwardThrustInput(pitch);
-
-    private void ResetForwardThrustInput() => thrustInput = 0f;
-    [Command]
-    private void CmdResetForwardThrustInput() => ResetForwardThrustInput();
-
     public void Start()
     {
+        DebugHandler.NetworkLog("Spaceship start.", this);
+        if (isClient && isOwned)
+        {
+            BindToInputAction(Controls.Player.Pitch);
+            BindToInputAction(Controls.Player.Yaw);
+            BindToInputAction(Controls.Player.Roll);
+            BindToInputAction(Controls.Player.ForwardThrust);
+            BindToInputAction(Controls.Player.HorizontalThrust);
+            BindToInputAction(Controls.Player.VerticalThrust);
+            virtualCamera.gameObject.SetActive(true);
+            DebugHandler.NetworkLog("Spaceship bound actions.", this);
+        } else
+        {
+            virtualCamera.gameObject.SetActive(false);
+        }
         Invoke(nameof(DelayedStart), secondsBeforeStarting);
     }
 
@@ -128,28 +89,20 @@ public class SpaceshipController : AbstractNetworkController
     private void FixedUpdate()
     {
         if (isClientOnly && (!useAuthorityPhysics || !isOwned)) { return; }
-        Turn();
-        Strafe();
-        Thrust();
+        float deltaTimeTotalThrust = spaceshipData.totalThrust * Time.fixedDeltaTime;
+        Turn(deltaTimeTotalThrust);
+        Strafe(deltaTimeTotalThrust);
+        Thrust(deltaTimeTotalThrust);
     }
 
-    private void Turn()
+    private void Turn(float deltaTimeTotalThrust)
     {
-        float deltaTimeRotationThrust = spaceshipData.rotationThrust * Time.fixedDeltaTime;
-        if (pitchInput != 0.0f)
-        {
-            rb.AddRelativeTorque(pitchInput * deltaTimeRotationThrust * Vector3.right);
-        }
-        if (yawInput != 0.0f)
-        {
-            rb.AddRelativeTorque(yawInput * deltaTimeRotationThrust * Vector3.up);
-        }
-        if (rollInput != 0.0f)
-        {
-            rb.AddRelativeTorque(rollInput * deltaTimeRotationThrust * Vector3.forward);
-        }
+        float deltaTimeRotationThrust = deltaTimeTotalThrust * spaceshipData.rotationThrustRatio;
+        ApplyMovement(ApplyTorque, inputAxii[0], spaceshipData.pitchThrust, Vector3.right, deltaTimeRotationThrust);
+        ApplyMovement(ApplyTorque, inputAxii[1], spaceshipData.yawThrust, Vector3.up, deltaTimeRotationThrust);
+        ApplyMovement(ApplyTorque, inputAxii[2], spaceshipData.rollThrust, Vector3.forward, deltaTimeRotationThrust);
 
-        bool isAxisInputPresent = pitchInput != 0f || yawInput != 0f || rollInput != 0f;
+        bool isAxisInputPresent = inputAxii[0] != 0f || inputAxii[1] != 0f || inputAxii[2] != 0f;
         if (wasRotationAxisInputPresentLastUpdate && !isAxisInputPresent)
         {
             angularPID.Reset();
@@ -169,14 +122,17 @@ public class SpaceshipController : AbstractNetworkController
         wasRotationAxisInputPresentLastUpdate = isAxisInputPresent;
     }
 
-    private void Strafe()
+    private void Strafe(float deltaTimeTotalThrust)
     {
-        // TODO
+        float deltaTimeStrafeThrust = deltaTimeTotalThrust * spaceshipData.movementThrustRatio;
+        ApplyMovement(ApplyForce, inputAxii[4], spaceshipData.horizontalThrust, Vector3.right, deltaTimeStrafeThrust);
+        ApplyMovement(ApplyForce, inputAxii[5], spaceshipData.verticalThrust, Vector3.up, deltaTimeStrafeThrust);
     }
 
-    private void Thrust()
+    private void Thrust(float deltaTimeTotalThrust)
     {
-        if (thrustInput < 0f)
+        float forward = inputAxii[3];
+        if (forward < 0f)
         {
             if (!isStoppingMovement)
             {
@@ -190,7 +146,7 @@ public class SpaceshipController : AbstractNetworkController
             isStoppingMovement = false;
         }
 
-        float deltaTimeForwardThrust = spaceshipData.forwardThrust * Time.fixedDeltaTime;
+        float deltaTimeForwardThrust = deltaTimeTotalThrust * spaceshipData.movementThrustRatio;
         if (isStoppingMovement)
         {
             movementError = rb.velocity.magnitude;
@@ -199,11 +155,22 @@ public class SpaceshipController : AbstractNetworkController
         }
         else
         {
-            if (thrustInput != 0.0f)
+            if (forward != 0.0f)
             {
-                rb.AddRelativeForce(thrustInput * deltaTimeForwardThrust * Vector3.forward);
+                rb.AddRelativeForce(forward * deltaTimeForwardThrust * Vector3.forward);
             }
         }
-        
     }
+    private void ApplyMovement(Action<Vector3> thrustAction, float axisInput, Vector3 thrustRatio, Vector3 direction, float deltaTimeThrust)
+    {
+        if (axisInput != 0f)
+        {
+            float totalThrust = deltaTimeThrust * thrustRatio.x * (axisInput > 0f ? thrustRatio.y : thrustRatio.z);
+            thrustAction.Invoke(axisInput * totalThrust * direction);
+        }
+    }
+
+    private void ApplyTorque(Vector3 vec) => rb.AddRelativeTorque(vec);
+
+    private void ApplyForce(Vector3 vec) => rb.AddRelativeForce(vec);
 }

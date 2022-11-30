@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: CorvetteData
   m_EditorClassIdentifier: 
   mass: 10
-  forwardThrust: 100000
-  rotationThrust: 5000
-  strafeThrust: 1000
+  totalThrust: 100000
+  movementThrustRatio: 1
+  forwardThrust: {x: 1, y: 1, z: 1}
+  horizontalThrust: {x: 0.1, y: 1, z: 1}
+  verticalThrust: {x: 0.1, y: 1, z: 1}
+  rotationThrustRatio: 0.05
+  pitchThrust: {x: 1, y: 1, z: 1}
+  yawThrust: {x: 1, y: 1, z: 1}
+  rollThrust: {x: 1, y: 1, z: 1}

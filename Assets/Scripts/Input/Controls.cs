@@ -75,13 +75,31 @@ namespace Bluaniman.SpaceGame.Input
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Thrust"",
+                    ""name"": ""ForwardThrust"",
                     ""type"": ""Value"",
                     ""id"": ""afb3cbc9-41c5-4c9f-98ad-832b9406bde7"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""HorizontalThrust"",
+                    ""type"": ""Value"",
+                    ""id"": ""b2d06d7a-3d90-4a2e-b6e7-1bf1db424f55"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""VerticalThrust"",
+                    ""type"": ""Button"",
+                    ""id"": ""75c8b85e-ba72-43b3-a997-d79a0c59d3c3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -152,9 +170,9 @@ namespace Bluaniman.SpaceGame.Input
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""3b574fb9-1a11-4c2d-abf2-9f963b243a36"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""Axis With One Anti Modifier"",
+                    ""id"": ""388adc68-5ee7-465d-a29d-8ef6faae991f"",
+                    ""path"": ""AxisWithOneAntiModifier"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -163,31 +181,42 @@ namespace Bluaniman.SpaceGame.Input
                     ""isPartOfComposite"": false
                 },
                 {
+                    ""name"": ""modifier"",
+                    ""id"": ""f84f74e0-0d7b-4150-8cd8-cd9ff789d6cd"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": ""negative"",
-                    ""id"": ""e94a57e8-0ce0-447b-893a-d5b04fedd007"",
+                    ""id"": ""ccd9199b-8e5c-4f27-b7f5-335e9c3c536d"",
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
+                    ""groups"": """",
                     ""action"": ""Pitch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""positive"",
-                    ""id"": ""3a42d8e1-890d-4c77-91b5-53e8ef601fd0"",
+                    ""id"": ""2190975f-e28d-4c1f-bc1d-dbe1619434bc"",
                     ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
+                    ""groups"": """",
                     ""action"": ""Pitch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""0fd2e8f5-eba0-473e-9a7e-2698b443e633"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""Axis With One Anti Modifier"",
+                    ""id"": ""6d2ef7ad-b606-43a6-8358-8fa7a7b74cbf"",
+                    ""path"": ""AxisWithOneAntiModifier"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -196,31 +225,42 @@ namespace Bluaniman.SpaceGame.Input
                     ""isPartOfComposite"": false
                 },
                 {
+                    ""name"": ""modifier"",
+                    ""id"": ""57d199b6-4f46-433e-8afd-5705d8ed1fb4"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Yaw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": ""negative"",
-                    ""id"": ""457fdacb-46c3-4f4b-a8b1-bf315d315d07"",
+                    ""id"": ""5f0a864a-6ae1-42d2-9cfe-a075c81e5d2d"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
+                    ""groups"": """",
                     ""action"": ""Yaw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""positive"",
-                    ""id"": ""674e331e-1653-48dc-ba92-cf04badb178c"",
+                    ""id"": ""edca2d50-0350-4eef-b41c-ea254a7b15d5"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
+                    ""groups"": """",
                     ""action"": ""Yaw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""15122c48-f87e-412c-a2b0-785ad70acb8b"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""Axis With One Anti Modifier"",
+                    ""id"": ""dafb62e6-815d-47be-9706-70811fe35d60"",
+                    ""path"": ""AxisWithOneAntiModifier"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -229,57 +269,167 @@ namespace Bluaniman.SpaceGame.Input
                     ""isPartOfComposite"": false
                 },
                 {
+                    ""name"": ""modifier"",
+                    ""id"": ""5739c0a2-cb1a-455a-b52f-78116d2d418d"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": ""negative"",
-                    ""id"": ""bd084a64-063e-45f9-a83a-4d3f7594d5da"",
+                    ""id"": ""c598869d-b6a4-48f7-9f99-0d9a6c749c3b"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
+                    ""groups"": """",
                     ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""positive"",
-                    ""id"": ""72882c3f-ed7a-4a18-8857-bf2b33e8e04b"",
+                    ""id"": ""414d3a61-35a8-4073-99d4-3f22206c942e"",
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
+                    ""groups"": """",
                     ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""afac9d60-6823-457c-9d38-1196db9743f8"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""Axis With One Modifier"",
+                    ""id"": ""6b89925f-26e8-44a0-90dc-0a4c19cd8dae"",
+                    ""path"": ""AxisWithOneModifier"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Thrust"",
+                    ""action"": ""HorizontalThrust"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""negative"",
-                    ""id"": ""d0cf71fd-8e65-4794-8b70-7e4807f73d8f"",
+                    ""name"": ""modifier"",
+                    ""id"": ""9514264c-a2a0-4ad3-a8bd-577d83a38559"",
                     ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Thrust"",
+                    ""action"": ""HorizontalThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""60583532-e265-4198-a950-23c9a09a5327"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""HorizontalThrust"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""positive"",
-                    ""id"": ""b15746d9-9eae-4a56-aa39-13c3cc524123"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""id"": ""44192038-3b56-4ef2-8b90-b0bb35aa2b87"",
+                    ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Thrust"",
+                    ""action"": ""HorizontalThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Axis With One Modifier"",
+                    ""id"": ""509708a7-8ac0-401f-854f-9255da7ea5f5"",
+                    ""path"": ""AxisWithOneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ForwardThrust"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""69f08c4a-f5ab-4196-bf6b-391ff20d1a48"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""ForwardThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""a8c5f962-0478-4c27-a554-fa01755667d8"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""ForwardThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""eb770641-4594-4fcd-9f3c-921d8a6ab260"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""ForwardThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Axis With One Modifier"",
+                    ""id"": ""6d3801a5-7f32-4f27-b783-457c75999764"",
+                    ""path"": ""AxisWithOneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""VerticalThrust"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""21e1ff98-5c74-4a62-b4c9-008dd05058c8"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""VerticalThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""5f68fe39-9514-40ef-8250-5346bf549dda"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""VerticalThrust"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""882a29df-881b-4072-8cd2-a6970401d8df"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""VerticalThrust"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
@@ -312,7 +462,9 @@ namespace Bluaniman.SpaceGame.Input
             m_Player_Pitch = m_Player.FindAction("Pitch", throwIfNotFound: true);
             m_Player_Yaw = m_Player.FindAction("Yaw", throwIfNotFound: true);
             m_Player_Roll = m_Player.FindAction("Roll", throwIfNotFound: true);
-            m_Player_Thrust = m_Player.FindAction("Thrust", throwIfNotFound: true);
+            m_Player_ForwardThrust = m_Player.FindAction("ForwardThrust", throwIfNotFound: true);
+            m_Player_HorizontalThrust = m_Player.FindAction("HorizontalThrust", throwIfNotFound: true);
+            m_Player_VerticalThrust = m_Player.FindAction("VerticalThrust", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -377,7 +529,9 @@ namespace Bluaniman.SpaceGame.Input
         private readonly InputAction m_Player_Pitch;
         private readonly InputAction m_Player_Yaw;
         private readonly InputAction m_Player_Roll;
-        private readonly InputAction m_Player_Thrust;
+        private readonly InputAction m_Player_ForwardThrust;
+        private readonly InputAction m_Player_HorizontalThrust;
+        private readonly InputAction m_Player_VerticalThrust;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -387,7 +541,9 @@ namespace Bluaniman.SpaceGame.Input
             public InputAction @Pitch => m_Wrapper.m_Player_Pitch;
             public InputAction @Yaw => m_Wrapper.m_Player_Yaw;
             public InputAction @Roll => m_Wrapper.m_Player_Roll;
-            public InputAction @Thrust => m_Wrapper.m_Player_Thrust;
+            public InputAction @ForwardThrust => m_Wrapper.m_Player_ForwardThrust;
+            public InputAction @HorizontalThrust => m_Wrapper.m_Player_HorizontalThrust;
+            public InputAction @VerticalThrust => m_Wrapper.m_Player_VerticalThrust;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -412,9 +568,15 @@ namespace Bluaniman.SpaceGame.Input
                     @Roll.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRoll;
                     @Roll.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRoll;
                     @Roll.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRoll;
-                    @Thrust.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnThrust;
-                    @Thrust.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnThrust;
-                    @Thrust.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnThrust;
+                    @ForwardThrust.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForwardThrust;
+                    @ForwardThrust.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForwardThrust;
+                    @ForwardThrust.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnForwardThrust;
+                    @HorizontalThrust.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHorizontalThrust;
+                    @HorizontalThrust.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHorizontalThrust;
+                    @HorizontalThrust.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnHorizontalThrust;
+                    @VerticalThrust.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalThrust;
+                    @VerticalThrust.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalThrust;
+                    @VerticalThrust.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalThrust;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -434,9 +596,15 @@ namespace Bluaniman.SpaceGame.Input
                     @Roll.started += instance.OnRoll;
                     @Roll.performed += instance.OnRoll;
                     @Roll.canceled += instance.OnRoll;
-                    @Thrust.started += instance.OnThrust;
-                    @Thrust.performed += instance.OnThrust;
-                    @Thrust.canceled += instance.OnThrust;
+                    @ForwardThrust.started += instance.OnForwardThrust;
+                    @ForwardThrust.performed += instance.OnForwardThrust;
+                    @ForwardThrust.canceled += instance.OnForwardThrust;
+                    @HorizontalThrust.started += instance.OnHorizontalThrust;
+                    @HorizontalThrust.performed += instance.OnHorizontalThrust;
+                    @HorizontalThrust.canceled += instance.OnHorizontalThrust;
+                    @VerticalThrust.started += instance.OnVerticalThrust;
+                    @VerticalThrust.performed += instance.OnVerticalThrust;
+                    @VerticalThrust.canceled += instance.OnVerticalThrust;
                 }
             }
         }
@@ -457,7 +625,9 @@ namespace Bluaniman.SpaceGame.Input
             void OnPitch(InputAction.CallbackContext context);
             void OnYaw(InputAction.CallbackContext context);
             void OnRoll(InputAction.CallbackContext context);
-            void OnThrust(InputAction.CallbackContext context);
+            void OnForwardThrust(InputAction.CallbackContext context);
+            void OnHorizontalThrust(InputAction.CallbackContext context);
+            void OnVerticalThrust(InputAction.CallbackContext context);
         }
     }
 }

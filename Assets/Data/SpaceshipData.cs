@@ -4,7 +4,15 @@ using UnityEngine;
 public class SpaceshipData : ScriptableObject
 {
     public float mass;
-    public float forwardThrust;
-    public float rotationThrust;
-    public float strafeThrust;
+    public float totalThrust;
+
+    public float movementThrustRatio;
+    public Vector3 forwardThrust;
+    public Vector3 horizontalThrust;
+    public Vector3 verticalThrust;
+
+    public float rotationThrustRatio;
+    public Vector3 pitchThrust;
+    public Vector3 yawThrust;
+    public Vector3 rollThrust;
 }
