@@ -33,7 +33,9 @@ namespace Bluaniman.SpaceGame.Lobby
                 DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked confirm name button.");
                 hostButton.onClick.Invoke();
                 DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked host button.");
-            } else if (DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoJoin())) {
+            }
+            else if (DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoJoin()))
+            {
                 confirmNameButton.onClick.Invoke();
                 DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked confirm name button.");
                 joinButton.onClick.Invoke();

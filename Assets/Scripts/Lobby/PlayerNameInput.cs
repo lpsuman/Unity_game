@@ -18,8 +18,8 @@ namespace Bluaniman.SpaceGame.Lobby
 
         private void Start()
         {
-            SetUpInputField();
             playerNamePanel.SetActive(false);
+            SetUpInputField();
         }
 
         private void SetUpInputField()

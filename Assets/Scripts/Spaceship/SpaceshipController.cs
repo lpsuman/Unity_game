@@ -38,8 +38,9 @@ public class SpaceshipController : AbstractNetworkController
     [SerializeField] private float movementError;
     [SerializeField] private float movementCorrection;
 
-    public void Start()
+    public override void Start()
     {
+        base.Start();
         DebugHandler.NetworkLog("Spaceship start.", this);
         if (isClient && isOwned)
         {
@@ -92,21 +93,25 @@ public class SpaceshipController : AbstractNetworkController
 
     private void FixedUpdate()
     {
-        if (!isSetupDone || isClientOnly && (!useAuthorityPhysics || !isOwned)) { return; }
-        float deltaTimeTotalThrust = spaceshipData.totalThrust * Time.fixedDeltaTime;
-        Turn(deltaTimeTotalThrust);
-        Strafe(deltaTimeTotalThrust);
-        Thrust(deltaTimeTotalThrust);
+        DebugHandler.NetworkLog("Spaceship fixedUpdate start.", this);
+        if (isSetupDone && (isServer || (isClient && useAuthorityPhysics && isOwned)))
+        {
+            float deltaTimeTotalThrust = spaceshipData.totalThrust * Time.fixedDeltaTime;
+            Turn(deltaTimeTotalThrust);
+            Strafe(deltaTimeTotalThrust);
+            Thrust(deltaTimeTotalThrust);
+        }
+        DebugHandler.NetworkLog("Spaceship fixedUpdate end.", this);
     }
 
     private void Turn(float deltaTimeTotalThrust)
     {
         float deltaTimeRotationThrust = deltaTimeTotalThrust * spaceshipData.rotationThrustRatio;
-        ApplyMovement(ApplyTorque, inputAxii[0], spaceshipData.pitchThrust, Vector3.right, deltaTimeRotationThrust);
-        ApplyMovement(ApplyTorque, inputAxii[1], spaceshipData.yawThrust, Vector3.up, deltaTimeRotationThrust);
-        ApplyMovement(ApplyTorque, inputAxii[2], spaceshipData.rollThrust, Vector3.forward, deltaTimeRotationThrust);
+        ApplyMovement(ApplyTorque, GetInputAxis(0), spaceshipData.pitchThrust, Vector3.right, deltaTimeRotationThrust);
+        ApplyMovement(ApplyTorque, GetInputAxis(1), spaceshipData.yawThrust, Vector3.up, deltaTimeRotationThrust);
+        ApplyMovement(ApplyTorque, GetInputAxis(2), spaceshipData.rollThrust, Vector3.forward, deltaTimeRotationThrust);
 
-        bool isAxisInputPresent = inputAxii[0] != 0f || inputAxii[1] != 0f || inputAxii[2] != 0f;
+        bool isAxisInputPresent = GetInputAxis(0) != 0f || GetInputAxis(1) != 0f || GetInputAxis(2) != 0f;
         if (wasRotationAxisInputPresentLastUpdate && !isAxisInputPresent)
         {
             angularPID.Reset();
@@ -129,13 +134,13 @@ public class SpaceshipController : AbstractNetworkController
     private void Strafe(float deltaTimeTotalThrust)
     {
         float deltaTimeStrafeThrust = deltaTimeTotalThrust * spaceshipData.movementThrustRatio;
-        ApplyMovement(ApplyForce, inputAxii[4], spaceshipData.horizontalThrust, Vector3.right, deltaTimeStrafeThrust);
-        ApplyMovement(ApplyForce, inputAxii[5], spaceshipData.verticalThrust, Vector3.up, deltaTimeStrafeThrust);
+        ApplyMovement(ApplyForce, GetInputAxis(4), spaceshipData.horizontalThrust, Vector3.right, deltaTimeStrafeThrust);
+        ApplyMovement(ApplyForce, GetInputAxis(5), spaceshipData.verticalThrust, Vector3.up, deltaTimeStrafeThrust);
     }
 
     private void Thrust(float deltaTimeTotalThrust)
     {
-        float forward = inputAxii[3];
+        float forward = GetInputAxis(3);
         if (forward < 0f)
         {
             if (!isStoppingMovement)

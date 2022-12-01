@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Bluaniman.SpaceGame.Debugging
 {
-	public class DebugHandler : NetworkBehaviour
+	public class DebugHandler : MonoBehaviour
 	{
-		private static DebugHandler singleton;
+		public static DebugHandler singleton;
 		public struct DebugNetworkMessage : NetworkMessage
         {
 			public string debugMsg;
@@ -29,41 +29,40 @@ namespace Bluaniman.SpaceGame.Debugging
 			Always
         }
 
-		// ~SH fields (serialization helper) are used to show static fields in Unity's inspector
 		[Header("Debug")]
-		[SerializeField] private bool isDebugEnabled = false;
+		[SerializeField] private bool isDebugEnabled;
 		public static bool IsDebugEnabled() => singleton.isDebugEnabled;
-		[SerializeField] private bool updateOrder = false;
+		[SerializeField] private bool updateOrder;
 		public static bool UpdateOrder() => singleton.updateOrder;
-		[SerializeField] private OriginShiftLoggingMode originShift = OriginShiftLoggingMode.Disabled;
+		[SerializeField] private OriginShiftLoggingMode originShift;
 		public static OriginShiftLoggingMode OriginShift() => singleton.originShift;
-		[SerializeField] private bool cinemachineBrainUpdating = false;
+		[SerializeField] private bool cinemachineBrainUpdating;
 		public static bool CinemachineBrainUpdating() => singleton.cinemachineBrainUpdating;
-		[SerializeField] private bool mainMenu = false;
+		[SerializeField] private bool mainMenu;
 		public static bool MainMenu() => singleton.mainMenu;
-		[SerializeField] private bool input = false;
+		[SerializeField] private bool input;
 		public static bool Input() => singleton.input;
-		[SerializeField] private bool coroutine = false;
+		[SerializeField] private bool coroutine;
 		public static bool Coroutine() => singleton.coroutine;
 
 		[Header("Network debug")]
-		[SerializeField] private bool serverMessages = false;
+		[SerializeField] private bool serverMessages;
 		public static bool ServerMessages() => singleton.serverMessages;
-		[SerializeField] private bool remoteClientMessages = false;
+		[SerializeField] private bool remoteClientMessages;
 		public static bool RemoteClientMessages() => singleton.remoteClientMessages;
-		[SerializeField] private bool hostClientMessages = false;
+		[SerializeField] private bool hostClientMessages;
 		public static bool HostClientMessages() => singleton.hostClientMessages;
 
 		[Header("Lobby")]
-		[SerializeField] private AutoLobbyAction autoHost = AutoLobbyAction.Disabled;
+		[SerializeField] private AutoLobbyAction autoHost;
 		public static AutoLobbyAction AutoHost() => singleton.autoHost;
-		[SerializeField] private AutoLobbyAction autoJoin = AutoLobbyAction.Disabled;
+		[SerializeField] private AutoLobbyAction autoJoin;
 		public static AutoLobbyAction AutoJoin() => singleton.autoJoin;
-		[SerializeField] private AutoLobbyAction autoReady = AutoLobbyAction.Disabled;
+		[SerializeField] private AutoLobbyAction autoReady;
 		public static AutoLobbyAction AutoReady() => singleton.autoReady;
-		[SerializeField] private AutoLobbyAction autoStart = AutoLobbyAction.Disabled;
+		[SerializeField] private AutoLobbyAction autoStart;
 		public static AutoLobbyAction AutoStart() => singleton.autoStart;
-		[SerializeField] private AutoLobbyAction autoStartNotAlone = AutoLobbyAction.Disabled;
+		[SerializeField] private AutoLobbyAction autoStartNotAlone;
 		public static AutoLobbyAction AutoStartNotAlone() => singleton.autoStartNotAlone;
 
 		public static bool ShouldDebug(bool additionalCondition = true, NetworkBehaviour networkContext = null)
@@ -110,7 +109,7 @@ namespace Bluaniman.SpaceGame.Debugging
 				Debug.Log($"{debugMsg}\nNo connection to server.");
 				return;
             }
-            DebugNetworkMessage debugNetworkMessage = new DebugNetworkMessage()
+            DebugNetworkMessage debugNetworkMessage = new()
 			{
 				debugMsg = debugMsg,
 				isServer = networkContext != null && networkContext.isServer,
@@ -130,7 +129,7 @@ namespace Bluaniman.SpaceGame.Debugging
 			string msg = debugNetworkMessage.debugMsg;
 			if (!debugNetworkMessage.isServer && !debugNetworkMessage.isClient)
 			{
-				msg += "No network context provided.";
+				msg += "\nNo network context provided.";
 			}
 			else
 			{
@@ -142,23 +141,14 @@ namespace Bluaniman.SpaceGame.Debugging
 
         private void Awake()
         {
-			singleton = this;
+			if (singleton == null)
+			{
+				singleton = this;
+			}
 		}
 
         private void Start()
-        {
-			if (ShouldDebug())
-			{
-				if (isServer)
-				{
-					NetworkServer.RegisterHandler<DebugNetworkMessage>(OnDebugNetworkMessageFromClient);
-
-				}
-				if (isClient)
-                {
-					NetworkClient.RegisterHandler<DebugNetworkMessage>(OnDebugNetworkMessageFromServer);
-				}
-			}
+		{
 			DontDestroyOnLoad(this);
 		}
     }
