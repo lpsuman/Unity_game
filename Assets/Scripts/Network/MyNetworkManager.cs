@@ -5,6 +5,7 @@ using Mirror;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using Bluaniman.SpaceGame.Lobby;
+using Bluaniman.SpaceGame.Debugging;
 
 namespace Bluaniman.SpaceGame.Networking
 {
@@ -61,13 +62,13 @@ namespace Bluaniman.SpaceGame.Networking
         {
             if (numPlayers >= maxConnections)
             {
-                Debug.Log($"Disconnecting client due to too many players ({numPlayers}).");
+                DebugHandler.NetworkLog($"Disconnecting client due to too many players ({numPlayers}).");
                 conn.Disconnect();
                 return;
             }
             if (SceneManager.GetActiveScene().path != menuScene)
             {
-                Debug.Log("Disconnecting client because we are not in a lobby.");
+                DebugHandler.NetworkLog("Disconnecting client because we are not in a lobby.");
                 conn.Disconnect();
                 return;
             }
@@ -147,14 +148,5 @@ namespace Bluaniman.SpaceGame.Networking
             base.OnServerReady(conn);
             OnServerReadied?.Invoke(conn);
         }
-
-        //public override void OnServerSceneChanged(string sceneName)
-        //{
-        //    if (sceneName.StartsWith(gameSceneNamePrefix))
-        //    {
-        //        GameObject playerSpawnSystemInstance = Instantiate(playerSpawnSystem);
-        //        NetworkServer.Spawn(playerSpawnSystemInstance);
-        //    }
-        //}
     }
 }

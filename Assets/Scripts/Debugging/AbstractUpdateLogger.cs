@@ -30,18 +30,17 @@ namespace Bluaniman.SpaceGame.Debugging
 
         private void Start()
         {
-            enabled = DebugHandler.ShouldDebug(DebugHandler.updateOrder);
+            enabled = DebugHandler.ShouldDebug(DebugHandler.UpdateOrder());
         }
 
         private void DoLog(string prefix)
         {
-            if (optionalTransformToLog == null)
+            string msg = $"{prefix} {suffix}!";
+            if (optionalTransformToLog != null)
             {
-                Debug.Log($"{prefix} {suffix}!");
-            } else
-            {
-                Debug.Log($"{prefix} {suffix}!\nTransform = {optionalTransformToLog.position}");
+                msg += "\nTransform = {optionalTransformToLog.position}";
             }
+            DebugHandler.NetworkLog(msg, this);
         }
 
         private void DoPause()
@@ -51,7 +50,7 @@ namespace Bluaniman.SpaceGame.Debugging
 
         public void Update()
         {
-            if (logUpdate)
+            if (logUpdate && DebugHandler.ShouldDebug(DebugHandler.UpdateOrder()))
             {
                 DoLog(updatePrefix);
                 OnUpdate();
@@ -68,7 +67,7 @@ namespace Bluaniman.SpaceGame.Debugging
 
         public void FixedUpdate()
         {
-            if (logFixed)
+            if (logFixed && DebugHandler.ShouldDebug(DebugHandler.UpdateOrder()))
             {
                 DoLog(fixedPrefix);
                 OnFixedUpdate();
@@ -86,7 +85,7 @@ namespace Bluaniman.SpaceGame.Debugging
 
         public void LateUpdate()
         {
-            if (logLate)
+            if (logLate && DebugHandler.ShouldDebug(DebugHandler.UpdateOrder()))
             {
                 DoLog(latePrefix);
                 OnLateUpdate();

@@ -1,5 +1,6 @@
 using System;
 using Bluaniman.SpaceGame.Debugging;
+using Bluaniman.SpaceGame.General;
 using Bluaniman.SpaceGame.Networking;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,21 +27,23 @@ namespace Bluaniman.SpaceGame.Lobby
             nameInputPanel.SetActive(true);
             landingPanel.SetActive(false);
             ipAddressInputPanel.SetActive(false);
-            if (DebugHandler.ShouldAutoLobbyAction(DebugHandler.autoHost))
+            if (DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoHost()))
             {
                 confirmNameButton.onClick.Invoke();
-                DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, "Autoclicked confirm name button.");
+                DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked confirm name button.");
                 hostButton.onClick.Invoke();
-                DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, "Autoclicked host button.");
-            } else if (DebugHandler.ShouldAutoLobbyAction(DebugHandler.autoJoin)) {
+                DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked host button.");
+            } else if (DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoJoin())) {
                 confirmNameButton.onClick.Invoke();
-                DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, "Autoclicked confirm name button.");
+                DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked confirm name button.");
                 joinButton.onClick.Invoke();
-                DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, "Autoclicked join button.");
-                confirmIpButton.onClick.Invoke();
-                DebugHandler.CheckAndDebugLog(DebugHandler.mainMenu, "Autoclicked confirm IP button.");
+                DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked join button.");
+                StartCoroutine(CoroutineHelper.CheckDoWait(2f, () => ipAddressInputPanel.activeInHierarchy, () =>
+                {
+                    confirmIpButton.onClick.Invoke();
+                    DebugHandler.CheckAndDebugLog(DebugHandler.MainMenu(), "Autoclicked confirm IP button.");
+                }));
             }
-
         }
         public void HostLobby()
         {

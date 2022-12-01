@@ -9,20 +9,23 @@ namespace Bluaniman.SpaceGame.Debugging
 	{
         private void Start()
         {
-            switch (DebugHandler.originShift)
+            switch (DebugHandler.OriginShift())
             {
                 case DebugHandler.OriginShiftLoggingMode.Disabled:
                     break;
                 case DebugHandler.OriginShiftLoggingMode.OnlyOnChange:
                     OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
                     {
-                        Debug.Log($"Origin changed and shifted by {shiftVector}");
+                        if (shiftVector.magnitude > 0f)
+                        {
+                            DebugHandler.NetworkLog($"Origin changed and shifted by {shiftVector}", this);
+                        }
                     });
                     break;
                 case DebugHandler.OriginShiftLoggingMode.Always:
                     OriginShift.OnOriginShifted.AddListener((_, shiftVector) =>
                     {
-                        Debug.Log($"Origin shifted by {shiftVector}");
+                        DebugHandler.NetworkLog($"Origin shifted by {shiftVector}", this);
                     });
                     break;
                 default:

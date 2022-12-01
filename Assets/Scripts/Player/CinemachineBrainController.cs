@@ -18,7 +18,7 @@ namespace Bluaniman.SpaceGame.Player
                     ICinemachineCamera vcam = cinemachineBrain.ActiveVirtualCamera;
                     vcam.OnTargetObjectWarped(vcam.Follow, Vector3.zero);
                     cinemachineBrain.ManualUpdate();
-                    DebugHandler.CheckAndDebugLog(DebugHandler.cinemachineBrainUpdating, "Brain notified.");
+                    DebugHandler.CheckAndDebugLog(DebugHandler.CinemachineBrainUpdating(), "Brain notified.");
                 }
             });
         }
@@ -26,7 +26,7 @@ namespace Bluaniman.SpaceGame.Player
         public void FixedUpdate()
         {
             cinemachineBrain.ManualUpdate();
-            DebugHandler.CheckAndDebugLog(DebugHandler.cinemachineBrainUpdating, "Brain fixed update.");
+            DebugHandler.CheckAndDebugLog(DebugHandler.CinemachineBrainUpdating(), "Brain fixed update.");
         }
     }
 }

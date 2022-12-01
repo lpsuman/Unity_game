@@ -41,15 +41,15 @@ namespace Bluaniman.SpaceGame.Lobby
         public void SpawnPlayer(NetworkConnectionToClient conn)
         {
             Transform spawnPoint = spawnPoints.ElementAtOrDefault(nextIndex);
-            DebugHandler.CheckAndDebugLog(DebugHandler.originShift != DebugHandler.OriginShiftLoggingMode.Disabled, $"Spawn point {nextIndex} at {spawnPoint.position}.");
+            DebugHandler.CheckAndDebugLog(DebugHandler.OriginShift() != DebugHandler.OriginShiftLoggingMode.Disabled, $"Spawn point {nextIndex} at {spawnPoint.position}.");
             if (spawnPoint == null)
             {
-                Debug.LogError($"Missing spawn point for player {nextIndex}!");
+                DebugHandler.NetworkLog($"Missing spawn point for player {nextIndex}!", this);
                 return;
             }
             GameObject playerInstance = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             NetworkServer.Spawn(playerInstance, conn);
-            DebugHandler.CheckAndDebugLog(DebugHandler.originShift != DebugHandler.OriginShiftLoggingMode.Disabled, $"Set OS focus for player {nextIndex} to {playerInstance.transform.position}.");
+            DebugHandler.CheckAndDebugLog(DebugHandler.OriginShift() != DebugHandler.OriginShiftLoggingMode.Disabled, $"Set OS focus for player {nextIndex} to {playerInstance.transform.position}.");
             TargetSetOriginShiftFocus(conn, playerInstance.transform);
             if (updateStartLogger != null)
             {

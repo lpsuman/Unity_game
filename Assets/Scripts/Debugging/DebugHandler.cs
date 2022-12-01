@@ -3,8 +3,17 @@ using UnityEngine;
 
 namespace Bluaniman.SpaceGame.Debugging
 {
-	public class DebugHandler : MonoBehaviour, ISerializationCallbackReceiver
+	public class DebugHandler : NetworkBehaviour
 	{
+		private static DebugHandler singleton;
+		public struct DebugNetworkMessage : NetworkMessage
+        {
+			public string debugMsg;
+			public bool isServer;
+			public bool isClient;
+			public bool isOwned;
+        }
+
 		public enum AutoLobbyAction
         {
 			Disabled,
@@ -22,65 +31,54 @@ namespace Bluaniman.SpaceGame.Debugging
 
 		// ~SH fields (serialization helper) are used to show static fields in Unity's inspector
 		[Header("Debug")]
-		[SerializeField] private bool isDebugEnabledSH;
-		public static bool isDebugEnabled = false;
-		[SerializeField] private bool updateOrderSH;
-		public static bool updateOrder = false;
-		[SerializeField] private OriginShiftLoggingMode originShiftSH;
-		public static OriginShiftLoggingMode originShift = OriginShiftLoggingMode.Disabled;
-		[SerializeField] private bool cinemachineBrainUpdatingSH;
-		public static bool cinemachineBrainUpdating = false;
-		[SerializeField] private bool mainMenuSH;
-		public static bool mainMenu = false;
+		[SerializeField] private bool isDebugEnabled = false;
+		public static bool IsDebugEnabled() => singleton.isDebugEnabled;
+		[SerializeField] private bool updateOrder = false;
+		public static bool UpdateOrder() => singleton.updateOrder;
+		[SerializeField] private OriginShiftLoggingMode originShift = OriginShiftLoggingMode.Disabled;
+		public static OriginShiftLoggingMode OriginShift() => singleton.originShift;
+		[SerializeField] private bool cinemachineBrainUpdating = false;
+		public static bool CinemachineBrainUpdating() => singleton.cinemachineBrainUpdating;
+		[SerializeField] private bool mainMenu = false;
+		public static bool MainMenu() => singleton.mainMenu;
+		[SerializeField] private bool input = false;
+		public static bool Input() => singleton.input;
+		[SerializeField] private bool coroutine = false;
+		public static bool Coroutine() => singleton.coroutine;
 
 		[Header("Network debug")]
-		[SerializeField] private bool serverMessagesSH;
-		public static bool serverMessages = false;
-		[SerializeField] private bool remoteClientMessagesSH;
-		public static bool remoteClientMessages = false;
-		[SerializeField] private bool hostClientMessagesSH;
-		public static bool hostClientMessages = false;
+		[SerializeField] private bool serverMessages = false;
+		public static bool ServerMessages() => singleton.serverMessages;
+		[SerializeField] private bool remoteClientMessages = false;
+		public static bool RemoteClientMessages() => singleton.remoteClientMessages;
+		[SerializeField] private bool hostClientMessages = false;
+		public static bool HostClientMessages() => singleton.hostClientMessages;
 
 		[Header("Lobby")]
-		[SerializeField] private AutoLobbyAction autoHostSH;
-		public static AutoLobbyAction autoHost = AutoLobbyAction.Disabled;
-		[SerializeField] private AutoLobbyAction autoJoinSH;
-		public static AutoLobbyAction autoJoin = AutoLobbyAction.Disabled;
-		[SerializeField] private AutoLobbyAction autoReadySH;
-		public static AutoLobbyAction autoReady = AutoLobbyAction.Disabled;
-		[SerializeField] private AutoLobbyAction autoStartSH;
-		public static AutoLobbyAction autoStart = AutoLobbyAction.Disabled;
-		[SerializeField] private AutoLobbyAction autoStartNotAloneSH;
-		public static AutoLobbyAction autoStartNotAlone = AutoLobbyAction.Disabled;
+		[SerializeField] private AutoLobbyAction autoHost = AutoLobbyAction.Disabled;
+		public static AutoLobbyAction AutoHost() => singleton.autoHost;
+		[SerializeField] private AutoLobbyAction autoJoin = AutoLobbyAction.Disabled;
+		public static AutoLobbyAction AutoJoin() => singleton.autoJoin;
+		[SerializeField] private AutoLobbyAction autoReady = AutoLobbyAction.Disabled;
+		public static AutoLobbyAction AutoReady() => singleton.autoReady;
+		[SerializeField] private AutoLobbyAction autoStart = AutoLobbyAction.Disabled;
+		public static AutoLobbyAction AutoStart() => singleton.autoStart;
+		[SerializeField] private AutoLobbyAction autoStartNotAlone = AutoLobbyAction.Disabled;
+		public static AutoLobbyAction AutoStartNotAlone() => singleton.autoStartNotAlone;
 
-
-		public void OnAfterDeserialize()
-		{
-			isDebugEnabled = isDebugEnabledSH;
-			updateOrder = updateOrderSH;
-			originShift = originShiftSH;
-			cinemachineBrainUpdating = cinemachineBrainUpdatingSH;
-			mainMenu = mainMenuSH;
-
-			serverMessages = serverMessagesSH;
-			remoteClientMessages = remoteClientMessagesSH;
-			hostClientMessages = hostClientMessagesSH;
-
-			autoHost = autoHostSH;
-			autoJoin = autoJoinSH;
-			autoReady = autoReadySH;
-			autoStart = autoStartSH;
-			autoStartNotAlone = autoStartNotAloneSH;
-		}
-
-		public static bool ShouldDebug(bool additionalCondition = true)
+		public static bool ShouldDebug(bool additionalCondition = true, NetworkBehaviour networkContext = null)
         {
-			return isDebugEnabled && Application.isEditor && additionalCondition;
+			return IsDebugEnabled()
+				&& (	networkContext == null
+					|| (networkContext.isServer && ServerMessages())
+					|| (networkContext.isServer && networkContext.isClient && HostClientMessages())
+					|| (networkContext.isClientOnly && RemoteClientMessages()))
+				&& additionalCondition;
 		}
 
 		public static bool ShouldAutoLobbyAction(AutoLobbyAction lobbyAction)
 		{
-			if (!ShouldDebug())
+			if (!IsDebugEnabled())
 			{
 				return false;
 			}
@@ -98,7 +96,7 @@ namespace Bluaniman.SpaceGame.Debugging
 
 		public static void CheckAndDebugLog(bool additionalCondition, string debugMsg, NetworkBehaviour networkContext = null)
         {
-			if (ShouldDebug(additionalCondition))
+			if (additionalCondition)
             {
 				NetworkLog(debugMsg, networkContext);
             }
@@ -106,43 +104,62 @@ namespace Bluaniman.SpaceGame.Debugging
 
 		public static void NetworkLog(string debugMsg, NetworkBehaviour networkContext = null)
 		{
-			if (!ShouldDebug()) { return; }
-			if (networkContext == null)
+            if (!ShouldDebug()) { return; }
+			if (NetworkClient.connection == null || !NetworkClient.connection.isReady)
             {
-				Debug.Log($"{debugMsg}\nNo network context was provided.");
+				Debug.Log($"{debugMsg}\nNo connection to server.");
+				return;
             }
-			else if ((networkContext.isServer && serverMessages)
-				|| (networkContext.isServer && networkContext.isClient && hostClientMessages))
-            {
-				Log(debugMsg, networkContext);
+            DebugNetworkMessage debugNetworkMessage = new DebugNetworkMessage()
+			{
+				debugMsg = debugMsg,
+				isServer = networkContext != null && networkContext.isServer,
+				isClient = networkContext != null && networkContext.isClient,
+				isOwned = networkContext != null && networkContext.isOwned
+			};
+			NetworkClient.Send(debugNetworkMessage);
+		}
+
+		public static void OnDebugNetworkMessageFromClient(NetworkConnectionToClient conn, DebugNetworkMessage debugNetworkMessage)
+        {
+			NetworkServer.SendToAll(debugNetworkMessage);
+		}
+
+		public static void OnDebugNetworkMessageFromServer(DebugNetworkMessage debugNetworkMessage)
+		{
+			string msg = debugNetworkMessage.debugMsg;
+			if (!debugNetworkMessage.isServer && !debugNetworkMessage.isClient)
+			{
+				msg += "No network context provided.";
 			}
-			else if (networkContext.isClientOnly && remoteClientMessages)
-            {
-				CmdLog(debugMsg, networkContext);
-            }
+			else
+			{
+				msg += $"\nisServer={debugNetworkMessage.isServer} isClient={debugNetworkMessage.isClient} isOwned={debugNetworkMessage.isOwned}";
 
-
+			}
+			Debug.Log(msg);
 		}
 
-		private static void Log(string debugMsg, NetworkBehaviour networkContext)
+        private void Awake()
         {
-			Debug.Log($"{debugMsg}\nisServer={networkContext.isServer} isClient={networkContext.isClient} isOwned={networkContext.isOwned}");
+			singleton = this;
 		}
-
-		// TODO implement as network message
-		private static void CmdLog(string debugMsg, NetworkBehaviour networkContext)
-        {
-			Log(debugMsg, networkContext);
-        }
 
         private void Start()
         {
-			DontDestroyOnLoad(this);
-        }
+			if (ShouldDebug())
+			{
+				if (isServer)
+				{
+					NetworkServer.RegisterHandler<DebugNetworkMessage>(OnDebugNetworkMessageFromClient);
 
-        public void OnBeforeSerialize()
-        {
-            // do nothing
-        }
+				}
+				if (isClient)
+                {
+					NetworkClient.RegisterHandler<DebugNetworkMessage>(OnDebugNetworkMessageFromServer);
+				}
+			}
+			DontDestroyOnLoad(this);
+		}
     }
 }

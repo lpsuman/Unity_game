@@ -9,6 +9,7 @@ using UnityEngine;
 public class SpaceshipController : AbstractNetworkController
 {
     private const float secondsBeforeStarting = 3f;
+    private bool isSetupDone = false;
 
     [SerializeField] private OSNetTransform osNetTransform = null;
     [SerializeField] private OSNetRigidbody osNetRb = null;
@@ -42,12 +43,12 @@ public class SpaceshipController : AbstractNetworkController
         DebugHandler.NetworkLog("Spaceship start.", this);
         if (isClient && isOwned)
         {
-            BindToInputAction(Controls.Player.Pitch);
-            BindToInputAction(Controls.Player.Yaw);
-            BindToInputAction(Controls.Player.Roll);
-            BindToInputAction(Controls.Player.ForwardThrust);
-            BindToInputAction(Controls.Player.HorizontalThrust);
-            BindToInputAction(Controls.Player.VerticalThrust);
+            BindInputAction(Controls.Player.Pitch);
+            BindInputAction(Controls.Player.Yaw);
+            BindInputAction(Controls.Player.Roll);
+            BindInputAction(Controls.Player.ForwardThrust);
+            BindInputAction(Controls.Player.HorizontalThrust);
+            BindInputAction(Controls.Player.VerticalThrust);
             virtualCamera.gameObject.SetActive(true);
             DebugHandler.NetworkLog("Spaceship bound actions.", this);
         } else
@@ -74,6 +75,9 @@ public class SpaceshipController : AbstractNetworkController
         //osNetRb.clientAuthority = false;
         //osNetRb.serverOnlyPhysics = true;
         //rb.isKinematic = !useAuthorityPhysics;
+
+        isSetupDone = true;
+        DebugHandler.NetworkLog("Spaceship setup done.", this);
     }
 
     private void DoSetup()
@@ -88,7 +92,7 @@ public class SpaceshipController : AbstractNetworkController
 
     private void FixedUpdate()
     {
-        if (isClientOnly && (!useAuthorityPhysics || !isOwned)) { return; }
+        if (!isSetupDone || isClientOnly && (!useAuthorityPhysics || !isOwned)) { return; }
         float deltaTimeTotalThrust = spaceshipData.totalThrust * Time.fixedDeltaTime;
         Turn(deltaTimeTotalThrust);
         Strafe(deltaTimeTotalThrust);
