@@ -58,4 +58,4 @@ MonoBehaviour:
   autoJoin: 1
   autoReady: 3
   autoStart: 0
-  autoStartNotAlone: 3
+  autoStartNotAlone: 0

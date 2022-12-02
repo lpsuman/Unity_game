@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.aginerian.input": {
+      "version": "file:com.aginerian.input",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.inputsystem": "1.0.2"
+      }
+    },
     "com.unity.cinemachine": {
       "version": "file:com.unity.cinemachine",
       "depth": 0,

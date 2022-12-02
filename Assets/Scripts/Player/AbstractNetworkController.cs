@@ -31,8 +31,7 @@ namespace Bluaniman.SpaceGame.Player
 
         public virtual void Start()
         {
-            if (useAuthorityPhysics) { inputAxiiLocal = new(); }
-            if (isClient && isOwned)
+            if (IsClientWithOwnership())
             {
                 Controls.Enable();
                 inputAxii.Callback += OnInventoryUpdated;
@@ -42,6 +41,17 @@ namespace Bluaniman.SpaceGame.Player
             {
                 Controls.Disable();
             }
+            if (IsClientWithLocalControls()) { inputAxiiLocal = new(); }
+        }
+
+        protected bool IsClientWithOwnership()
+        {
+            return isClient && isOwned;
+        }
+
+        protected bool IsClientWithLocalControls()
+        {
+            return IsClientWithOwnership() && useAuthorityPhysics;
         }
 
         private void OnInventoryUpdated(SyncList<float>.Operation op, int index, float oldItem, float newItem)
@@ -72,7 +82,7 @@ namespace Bluaniman.SpaceGame.Player
             InputAction inputAction = inputActions[index];
             inputAction.performed += ctx => CmdSetAxisInput(index, ctx.ReadValue<float>());
             inputAction.canceled += ctx => CmdSetAxisInput(index, 0f);
-            if (useAuthorityPhysics)
+            if (IsClientWithLocalControls())
             {
                 inputAxiiLocal.Add(0f);
                 inputAction.performed += ctx => SetAxisInput(index, ctx.ReadValue<float>());
@@ -87,7 +97,7 @@ namespace Bluaniman.SpaceGame.Player
             {
                 inputAxii[index] = value;
             }
-            if (isClient && useAuthorityPhysics)
+            if (IsClientWithLocalControls())
             {
                 inputAxiiLocal[index] = value;
             }
@@ -103,7 +113,7 @@ namespace Bluaniman.SpaceGame.Player
 
         protected float GetInputAxis(int index)
         {
-            return isServer || !useAuthorityPhysics ? inputAxii[index] : inputAxiiLocal[index];
+            return isServer || !IsClientWithLocalControls() ? inputAxii[index] : inputAxiiLocal[index];
         }
     }
 }

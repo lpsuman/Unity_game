@@ -40,9 +40,9 @@ public class SpaceshipController : AbstractNetworkController
 
     public override void Start()
     {
-        base.Start();
         DebugHandler.NetworkLog("Spaceship start.", this);
-        if (isClient && isOwned)
+        base.Start();
+        if (IsClientWithOwnership())
         {
             BindInputAction(Controls.Player.Pitch);
             BindInputAction(Controls.Player.Yaw);
@@ -64,19 +64,13 @@ public class SpaceshipController : AbstractNetworkController
         rb = GetComponent<Rigidbody>();
         rb.mass = spaceshipData.mass;
         rb.useGravity = false;
-        if (isServer || (isClientOnly && useAuthorityPhysics))
+        if (isServer || IsClientWithLocalControls())
         {
             DoSetup();
         }
         osNetTransform.clientAuthority = useAuthorityPhysics;
         osNetRb.clientAuthority = useAuthorityPhysics;
         osNetRb.serverOnlyPhysics = !useAuthorityPhysics;
-
-        //osNetTransform.clientAuthority = false;
-        //osNetRb.clientAuthority = false;
-        //osNetRb.serverOnlyPhysics = true;
-        //rb.isKinematic = !useAuthorityPhysics;
-
         isSetupDone = true;
         DebugHandler.NetworkLog("Spaceship setup done.", this);
     }
@@ -94,7 +88,7 @@ public class SpaceshipController : AbstractNetworkController
     private void FixedUpdate()
     {
         DebugHandler.NetworkLog("Spaceship fixedUpdate start.", this);
-        if (isSetupDone && (isServer || (isClient && useAuthorityPhysics && isOwned)))
+        if (isSetupDone && (isServer || IsClientWithLocalControls()))
         {
             float deltaTimeTotalThrust = spaceshipData.totalThrust * Time.fixedDeltaTime;
             Turn(deltaTimeTotalThrust);

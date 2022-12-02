@@ -26,7 +26,7 @@
                 {
                     "name": "Pitch",
                     "type": "Value",
-                    "id": "7f090847-79f8-4837-afb6-387cfcafbfa4",
+                    "id": "c2f4dc35-96ce-44de-82fc-350cfee695f1",
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
@@ -35,7 +35,7 @@
                 {
                     "name": "Yaw",
                     "type": "Value",
-                    "id": "ee717039-8769-40e9-b9f0-1dc89b4e5e97",
+                    "id": "f1e0d2f4-3a91-43ac-b2e2-c71213075e16",
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
@@ -44,7 +44,7 @@
                 {
                     "name": "Roll",
                     "type": "Value",
-                    "id": "126faffe-14f6-4e4d-81d1-2cbfb62d564c",
+                    "id": "ad8b4cdd-919f-401a-bd0e-2da38857123d",
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
@@ -70,12 +70,12 @@
                 },
                 {
                     "name": "VerticalThrust",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "75c8b85e-ba72-43b3-a997-d79a0c59d3c3",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -146,141 +146,9 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Axis With One Anti Modifier",
-                    "id": "388adc68-5ee7-465d-a29d-8ef6faae991f",
-                    "path": "AxisWithOneAntiModifier",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pitch",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "modifier",
-                    "id": "f84f74e0-0d7b-4150-8cd8-cd9ff789d6cd",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pitch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "negative",
-                    "id": "ccd9199b-8e5c-4f27-b7f5-335e9c3c536d",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pitch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "2190975f-e28d-4c1f-bc1d-dbe1619434bc",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Pitch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Axis With One Anti Modifier",
-                    "id": "6d2ef7ad-b606-43a6-8358-8fa7a7b74cbf",
-                    "path": "AxisWithOneAntiModifier",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Yaw",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "modifier",
-                    "id": "57d199b6-4f46-433e-8afd-5705d8ed1fb4",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Yaw",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "negative",
-                    "id": "5f0a864a-6ae1-42d2-9cfe-a075c81e5d2d",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Yaw",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "edca2d50-0350-4eef-b41c-ea254a7b15d5",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Yaw",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Axis With One Anti Modifier",
-                    "id": "dafb62e6-815d-47be-9706-70811fe35d60",
-                    "path": "AxisWithOneAntiModifier",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Roll",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "modifier",
-                    "id": "5739c0a2-cb1a-455a-b52f-78116d2d418d",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "negative",
-                    "id": "c598869d-b6a4-48f7-9f99-0d9a6c749c3b",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "414d3a61-35a8-4073-99d4-3f22206c942e",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Axis With One Modifier",
-                    "id": "6b89925f-26e8-44a0-90dc-0a4c19cd8dae",
-                    "path": "AxisWithOneModifier",
+                    "name": "Axis With Modifiers",
+                    "id": "8c5c3abe-7e5b-4a4c-b467-c7c5f29b429b",
+                    "path": "AxisWithModifiers",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -289,30 +157,8 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "modifier",
-                    "id": "9514264c-a2a0-4ad3-a8bd-577d83a38559",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard & Mouse",
-                    "action": "HorizontalThrust",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "negative",
-                    "id": "60583532-e265-4198-a950-23c9a09a5327",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard & Mouse",
-                    "action": "HorizontalThrust",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "44192038-3b56-4ef2-8b90-b0bb35aa2b87",
+                    "name": "axis",
+                    "id": "cf86cc5b-8f41-43c3-bd91-36689a9b006d",
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
@@ -322,9 +168,31 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Axis With One Modifier",
-                    "id": "509708a7-8ac0-401f-854f-9255da7ea5f5",
-                    "path": "AxisWithOneModifier",
+                    "name": "axis",
+                    "id": "745d2b8a-f0e2-4e2d-a49f-a9ed7321b9ed",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "Keyboard & Mouse",
+                    "action": "HorizontalThrust",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier",
+                    "id": "9e41201f-7fd9-4493-b4d4-9bc203e2bff1",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "HorizontalThrust",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Axis With Modifiers",
+                    "id": "a0c2f77b-f7f7-4f46-9b5f-701ec585d0db",
+                    "path": "AxisWithModifiers",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -333,30 +201,8 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "modifier",
-                    "id": "69f08c4a-f5ab-4196-bf6b-391ff20d1a48",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard & Mouse",
-                    "action": "ForwardThrust",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "negative",
-                    "id": "a8c5f962-0478-4c27-a554-fa01755667d8",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard & Mouse",
-                    "action": "ForwardThrust",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "eb770641-4594-4fcd-9f3c-921d8a6ab260",
+                    "name": "axis",
+                    "id": "3b48603f-6a46-4607-991c-db3008686832",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
@@ -366,9 +212,31 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Axis With One Modifier",
-                    "id": "6d3801a5-7f32-4f27-b783-457c75999764",
-                    "path": "AxisWithOneModifier",
+                    "name": "axis",
+                    "id": "2c08096f-822a-407d-bd6b-37eb8a44386e",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "Keyboard & Mouse",
+                    "action": "ForwardThrust",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier",
+                    "id": "1866a4d7-2e87-4030-846e-ad7de7b930f9",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "ForwardThrust",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Axis With Modifiers",
+                    "id": "a7fb048d-c600-45c6-a350-eee25abdcde5",
+                    "path": "AxisWithModifiers",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -377,8 +245,30 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "axis",
+                    "id": "b7e070dd-529d-473d-b8dd-195a87767609",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "VerticalThrust",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "axis",
+                    "id": "9e3059a3-292a-4b99-8be0-46dd1b98cf00",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "Keyboard & Mouse",
+                    "action": "VerticalThrust",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "modifier",
-                    "id": "21e1ff98-5c74-4a62-b4c9-008dd05058c8",
+                    "id": "29ed9e23-c3fb-4dc6-9711-0324514013ad",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
@@ -388,24 +278,134 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "negative",
-                    "id": "5f68fe39-9514-40ef-8250-5346bf549dda",
-                    "path": "<Keyboard>/s",
+                    "name": "Axis With Modifiers",
+                    "id": "9779bc23-935e-400f-b69e-c6f0e3231e6b",
+                    "path": "AxisWithModifiers",
                     "interactions": "",
                     "processors": "",
+                    "groups": "",
+                    "action": "Roll",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "axis",
+                    "id": "189b6708-801c-480c-93a3-64e5c4bf5841",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "Invert",
                     "groups": "Keyboard & Mouse",
-                    "action": "VerticalThrust",
+                    "action": "Roll",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "positive",
-                    "id": "882a29df-881b-4072-8cd2-a6970401d8df",
-                    "path": "<Keyboard>/w",
+                    "name": "axis",
+                    "id": "42eda7c0-5295-4a04-8001-f7d58808ccc0",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
-                    "action": "VerticalThrust",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier",
+                    "id": "9fdf84f1-2bb0-4c37-8593-0ffa9633ef96",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "NegateButton",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Axis With Modifiers",
+                    "id": "167edcdc-b8a2-4124-9cdb-77522fb0f91b",
+                    "path": "AxisWithModifiers",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pitch",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "axis",
+                    "id": "e40ad068-c8cc-4b42-9b08-81048b5994f7",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Pitch",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "axis",
+                    "id": "4398e13a-ee35-4420-8954-669cbe188db2",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Pitch",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier",
+                    "id": "86db195a-affb-4a4c-b6e4-9b5a384fc157",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "NegateButton",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Pitch",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Axis With Modifiers",
+                    "id": "d55f6365-fe19-4300-b005-825ee6cf8fba",
+                    "path": "AxisWithModifiers",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Yaw",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "axis",
+                    "id": "8c8bea19-a502-46bf-bd47-e8127a06c93b",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Yaw",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "axis",
+                    "id": "bb565f54-d630-4570-8eb8-9247313a6e03",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Yaw",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "modifier",
+                    "id": "321f5af6-20ae-4774-985a-17f5657ddd1d",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "NegateButton",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Yaw",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }
