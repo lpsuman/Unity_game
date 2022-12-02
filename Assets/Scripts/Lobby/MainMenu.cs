@@ -52,5 +52,10 @@ namespace Bluaniman.SpaceGame.Lobby
             networkManager.StartHost();
             landingPanel.SetActive(false);
         }
+
+        public void ShowLandingPage()
+        {
+            landingPanel.SetActive(true);
+        }
     }
 }

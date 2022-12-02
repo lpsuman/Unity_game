@@ -5,10 +5,11 @@ using Bluaniman.SpaceGame.Networking;
 using TMPro;
 using UnityEngine.UI;
 using Bluaniman.SpaceGame.Debugging;
+using Bluaniman.SpaceGame.Network;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
-    public class MyNetworkRoomPlayer : NetworkBehaviour
+    public class MyNetworkRoomPlayer : MyNetworkBehavior
     {
         [Header("UI")]
         [SerializeField] private GameObject lobbyUI = null;
@@ -70,7 +71,10 @@ namespace Bluaniman.SpaceGame.Lobby
         public override void OnStopClient()
         {
             Room.RoomPlayers.Remove(this);
-            UpdateDisplay();
+            if (isOwned)
+            {
+                FindObjectOfType<MainMenu>().ShowLandingPage();
+            }
         }
 
         private void HandleDisplayNameChanged(string oldValue, string newValue) => UpdateDisplay();
@@ -138,6 +142,23 @@ namespace Bluaniman.SpaceGame.Lobby
         {
             if (Room.RoomPlayers[0].connectionToClient != connectionToClient) { return; }
             Room.StartGame();
+        }
+
+        public void LeaveLobby()
+        {
+            MyNetworkManager myNetworkManager = FindObjectOfType<MyNetworkManager>();
+            if (isServer && isClient)
+            {
+                myNetworkManager.StopHost();
+            }
+            else if (isServer)
+            {
+                myNetworkManager.StopServer();
+            }
+            else
+            {
+                myNetworkManager.StopClient();
+            }
         }
     }
 }

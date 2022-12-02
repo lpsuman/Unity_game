@@ -1,18 +1,19 @@
-using UnityEngine;
-using Mirror;
-using Bluaniman.SpaceGame.Input;
-using UnityEngine.InputSystem;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using Mirror;
 using Bluaniman.SpaceGame.Debugging;
+using Bluaniman.SpaceGame.Network;
+using Bluaniman.SpaceGame.Input;
+using UnityEngine.InputSystem;
 
 namespace Bluaniman.SpaceGame.Player
 {
-	public abstract class AbstractNetworkController : NetworkBehaviour
+	public abstract class AbstractNetworkController : MyNetworkBehavior
 	{
         private readonly SyncList<float> inputAxii = new();
-        private List<float> inputAxiiLocal;
         private readonly List<InputAction> inputActions = new();
+        private List<float> inputAxiiLocal;
         [SerializeField] protected bool useAuthorityPhysics = true;
 
         private Controls controls;
@@ -34,19 +35,16 @@ namespace Bluaniman.SpaceGame.Player
             if (IsClientWithOwnership())
             {
                 Controls.Enable();
-                inputAxii.Callback += OnInventoryUpdated;
-                DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controls enabled.", this);
+                if (DebugHandler.ShouldDebug(DebugHandler.Input())) {
+                    inputAxii.Callback += OnInventoryUpdated;
+                    DebugHandler.NetworkLog("Controls enabled.", this);
+                }
             }
             else
             {
                 Controls.Disable();
             }
             if (IsClientWithLocalControls()) { inputAxiiLocal = new(); }
-        }
-
-        protected bool IsClientWithOwnership()
-        {
-            return isClient && isOwned;
         }
 
         protected bool IsClientWithLocalControls()
@@ -56,7 +54,7 @@ namespace Bluaniman.SpaceGame.Player
 
         private void OnInventoryUpdated(SyncList<float>.Operation op, int index, float oldItem, float newItem)
         {
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Input axis at {index} changed to {newItem}.", this);
+            DebugHandler.NetworkLog($"Input axis at {index} changed to {newItem}.", this);
         }
 
         [Client]
@@ -93,11 +91,11 @@ namespace Bluaniman.SpaceGame.Player
 
         public void SetAxisInput(int index, float value)
         {
-            if (isServer)
+            if (isServer || !IsClientWithLocalControls())
             {
                 inputAxii[index] = value;
             }
-            if (IsClientWithLocalControls())
+            else
             {
                 inputAxiiLocal[index] = value;
             }
