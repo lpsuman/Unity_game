@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 64125288863947982}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.77, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -290,10 +290,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7674618156202781957}
+  - component: {fileID: 25125162464929386}
+  - component: {fileID: 3075203574099729419}
   - component: {fileID: 2299859144026722099}
+  - component: {fileID: 4163254934402375129}
   - component: {fileID: 8327792479718151918}
   - component: {fileID: 7962293919462791176}
-  - component: {fileID: 3075203574099729419}
   - component: {fileID: 2999575278672236875}
   m_Layer: 29
   m_Name: Spaceship
@@ -319,6 +321,52 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &25125162464929386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8018749676320522877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153a7e6b9077f3544a05a9cac91b6ebd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  useAuthorityPhysics: 1
+  osNetTransform: {fileID: 7962293919462791176}
+  osNetRb: {fileID: 2999575278672236875}
+  movementData: {fileID: 11400000, guid: 557669193e0f0954d9c5ae595a1ba074, type: 2}
+  angularPIDstartingP: 10
+  angularPIDstartingI: 0
+  angularPIDstartingD: 0.1
+  angularVelocityError: 0
+  angularVelocityCorrection: 0
+  movementPIDstartingP: 1
+  movementPIDstartingI: 0
+  movementPIDstartingD: 0.01
+  movementError: 0
+  movementCorrection: 0
+  torque: {x: 0, y: 0, z: 0}
+--- !u!54 &3075203574099729419
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8018749676320522877}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!114 &2299859144026722099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,24 +383,25 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   useAuthorityPhysics: 1
-  osNetTransform: {fileID: 7962293919462791176}
-  osNetRb: {fileID: 2999575278672236875}
+  movementController: {fileID: 25125162464929386}
+  networkController: {fileID: 4163254934402375129}
   virtualCamera: {fileID: 7351524879803008780}
-  spaceshipData: {fileID: 11400000, guid: 557669193e0f0954d9c5ae595a1ba074, type: 2}
-  angularPIDstartingP: 10
-  angularPIDstartingI: 0
-  angularPIDstartingD: 0.1
-  angularVelocityError: 0
-  angularVelocityCorrection: 0
-  movementPIDstartingP: 1
-  movementPIDstartingI: 0
-  movementPIDstartingD: 0.01
-  movementError: 0
-  movementCorrection: 0
-  pitchInput: 0
-  yawInput: 0
-  rollInput: 0
-  thrustInput: 0
+--- !u!114 &4163254934402375129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8018749676320522877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b8f3084fcccf6940800c5c76f05a00d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  useAuthorityPhysics: 1
 --- !u!114 &8327792479718151918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,22 +438,6 @@ MonoBehaviour:
   isAutoFocus: 0
   lerpPositionAmount: 0.35
   lerpRotationAmount: 0.1
---- !u!54 &3075203574099729419
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8018749676320522877}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 3
 --- !u!114 &2999575278672236875
 MonoBehaviour:
   m_ObjectHideFlags: 0

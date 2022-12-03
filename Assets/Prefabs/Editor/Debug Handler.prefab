@@ -54,8 +54,8 @@ MonoBehaviour:
   serverMessages: 1
   remoteClientMessages: 1
   hostClientMessages: 1
-  autoHost: 2
-  autoJoin: 1
+  autoHost: 1
+  autoJoin: 2
   autoReady: 3
-  autoStart: 0
-  autoStartNotAlone: 0
+  autoStart: 1
+  autoStartNotAlone: 3

@@ -6,18 +6,21 @@ using Bluaniman.SpaceGame.Debugging;
 using Bluaniman.SpaceGame.Network;
 using Bluaniman.SpaceGame.Input;
 using UnityEngine.InputSystem;
+using twoloop;
 
 namespace Bluaniman.SpaceGame.Player
 {
-	public abstract class AbstractNetworkController : MyNetworkBehavior
-	{
+    [Serializable]
+    public class NetworkPlayerController : MyNetworkBehavior, IInputAxisProvider
+    {
         private readonly SyncList<float> inputAxii = new();
         private readonly List<InputAction> inputActions = new();
         private List<float> inputAxiiLocal;
-        [SerializeField] protected bool useAuthorityPhysics = true;
+
+        public event Action OnControlsEnabled;
 
         private Controls controls;
-        protected Controls Controls
+        public Controls Controls
         {
             get
             {
@@ -29,27 +32,25 @@ namespace Bluaniman.SpaceGame.Player
                 return controls;
             }
         }
-
-        public virtual void Start()
+        public void Start()
         {
+            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controller setup start.", this);
+            if (IsClientWithLocalControls()) { inputAxiiLocal = new(); }
             if (IsClientWithOwnership())
             {
                 Controls.Enable();
-                if (DebugHandler.ShouldDebug(DebugHandler.Input())) {
+                if (DebugHandler.ShouldDebug(DebugHandler.Input()))
+                {
                     inputAxii.Callback += OnInventoryUpdated;
-                    DebugHandler.NetworkLog("Controls enabled.", this);
                 }
+                DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controls enabled.", this);
+                OnControlsEnabled?.Invoke();
             }
             else
             {
                 Controls.Disable();
             }
-            if (IsClientWithLocalControls()) { inputAxiiLocal = new(); }
-        }
-
-        protected bool IsClientWithLocalControls()
-        {
-            return IsClientWithOwnership() && useAuthorityPhysics;
+            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controller setup done.", this);
         }
 
         private void OnInventoryUpdated(SyncList<float>.Operation op, int index, float oldItem, float newItem)
@@ -58,7 +59,7 @@ namespace Bluaniman.SpaceGame.Player
         }
 
         [Client]
-        protected void BindInputAction(InputAction inputAction)
+        public void BindInputAction(InputAction inputAction)
         {
             inputActions.Add(inputAction);
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Client added input action at {inputActions.Count - 1}", this);
@@ -66,7 +67,7 @@ namespace Bluaniman.SpaceGame.Player
         }
 
         [Command]
-        public void CmdAddToInputActionSyncList(NetworkConnectionToClient sender = null)
+        private void CmdAddToInputActionSyncList(NetworkConnectionToClient sender = null)
         {
             inputAxii.Add(0f);
             int index = inputAxii.Count - 1;
@@ -75,7 +76,7 @@ namespace Bluaniman.SpaceGame.Player
         }
 
         [TargetRpc]
-        public void TargetInputBound(NetworkConnection target, int index)
+        private void TargetInputBound(NetworkConnection target, int index)
         {
             InputAction inputAction = inputActions[index];
             inputAction.performed += ctx => CmdSetAxisInput(index, ctx.ReadValue<float>());
@@ -103,13 +104,13 @@ namespace Bluaniman.SpaceGame.Player
         }
 
         [Command]
-        public void CmdSetAxisInput(int index, float value)
+        private void CmdSetAxisInput(int index, float value)
         {
             SetAxisInput(index, value);
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Called command axis input {index} to {value}", this);
         }
 
-        protected float GetInputAxis(int index)
+        public float GetInputAxis(int index)
         {
             return isServer || !IsClientWithLocalControls() ? inputAxii[index] : inputAxiiLocal[index];
         }

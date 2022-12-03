@@ -6,7 +6,7 @@ using Bluaniman.SpaceGame.Input;
 
 namespace Bluaniman.SpaceGame.Player
 {
-	public class PlayerMovementController : AbstractNetworkController
+	public class PlayerMovementController : NetworkPlayerController
     {
 		[SerializeField] private float movementSpeed = 5f;
 		[SerializeField] private CharacterController characterController = null;
