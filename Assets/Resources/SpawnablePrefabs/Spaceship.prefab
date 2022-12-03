@@ -340,16 +340,18 @@ MonoBehaviour:
   osNetTransform: {fileID: 7962293919462791176}
   osNetRb: {fileID: 2999575278672236875}
   movementData: {fileID: 11400000, guid: 557669193e0f0954d9c5ae595a1ba074, type: 2}
-  angularPIDstartingP: 10
-  angularPIDstartingI: 0
-  angularPIDstartingD: 0.1
+  angularPidFactors:
+    pFactor: 10
+    iFactor: 0
+    dFactor: 0.1
   angularVelocityError: 0
   angularVelocityCorrection: 0
-  movementPIDstartingP: 1
-  movementPIDstartingI: 0
-  movementPIDstartingD: 0.01
-  movementError: 0
-  movementCorrection: 0
+  movementPidFactors:
+    pFactor: 0.1
+    iFactor: 0
+    dFactor: 0.001
+  movementVelocityError: 0
+  movementVelocityCorrection: 0
   torque: {x: 0, y: 0, z: 0}
 --- !u!54 &3075203574099729419
 Rigidbody:

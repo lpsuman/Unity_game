@@ -76,6 +76,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Stop",
+                    "type": "Value",
+                    "id": "d85868d9-2935-46c8-aab8-9b9358a4027b",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SnapMove",
+                    "type": "Value",
+                    "id": "1de23ccf-3b62-47b1-b98f-9af92340e3e7",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -408,6 +426,28 @@
                     "action": "Yaw",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "7103b2ef-6da4-4c15-a3eb-0c99b4c3c2df",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Stop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "130bc0d5-e5f4-47d8-aada-2f30c8b1602e",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "SnapMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

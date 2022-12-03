@@ -100,6 +100,24 @@ namespace Bluaniman.SpaceGame.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Stop"",
+                    ""type"": ""Value"",
+                    ""id"": ""d85868d9-2935-46c8-aab8-9b9358a4027b"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SnapMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""1de23ccf-3b62-47b1-b98f-9af92340e3e7"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -432,6 +450,28 @@ namespace Bluaniman.SpaceGame.Input
                     ""action"": ""Yaw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7103b2ef-6da4-4c15-a3eb-0c99b4c3c2df"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""Stop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""130bc0d5-e5f4-47d8-aada-2f30c8b1602e"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""SnapMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -465,6 +505,8 @@ namespace Bluaniman.SpaceGame.Input
             m_Player_ForwardThrust = m_Player.FindAction("ForwardThrust", throwIfNotFound: true);
             m_Player_HorizontalThrust = m_Player.FindAction("HorizontalThrust", throwIfNotFound: true);
             m_Player_VerticalThrust = m_Player.FindAction("VerticalThrust", throwIfNotFound: true);
+            m_Player_Stop = m_Player.FindAction("Stop", throwIfNotFound: true);
+            m_Player_SnapMove = m_Player.FindAction("SnapMove", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -532,6 +574,8 @@ namespace Bluaniman.SpaceGame.Input
         private readonly InputAction m_Player_ForwardThrust;
         private readonly InputAction m_Player_HorizontalThrust;
         private readonly InputAction m_Player_VerticalThrust;
+        private readonly InputAction m_Player_Stop;
+        private readonly InputAction m_Player_SnapMove;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -544,6 +588,8 @@ namespace Bluaniman.SpaceGame.Input
             public InputAction @ForwardThrust => m_Wrapper.m_Player_ForwardThrust;
             public InputAction @HorizontalThrust => m_Wrapper.m_Player_HorizontalThrust;
             public InputAction @VerticalThrust => m_Wrapper.m_Player_VerticalThrust;
+            public InputAction @Stop => m_Wrapper.m_Player_Stop;
+            public InputAction @SnapMove => m_Wrapper.m_Player_SnapMove;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -577,6 +623,12 @@ namespace Bluaniman.SpaceGame.Input
                     @VerticalThrust.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalThrust;
                     @VerticalThrust.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalThrust;
                     @VerticalThrust.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalThrust;
+                    @Stop.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStop;
+                    @Stop.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStop;
+                    @Stop.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStop;
+                    @SnapMove.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapMove;
+                    @SnapMove.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapMove;
+                    @SnapMove.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapMove;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -605,6 +657,12 @@ namespace Bluaniman.SpaceGame.Input
                     @VerticalThrust.started += instance.OnVerticalThrust;
                     @VerticalThrust.performed += instance.OnVerticalThrust;
                     @VerticalThrust.canceled += instance.OnVerticalThrust;
+                    @Stop.started += instance.OnStop;
+                    @Stop.performed += instance.OnStop;
+                    @Stop.canceled += instance.OnStop;
+                    @SnapMove.started += instance.OnSnapMove;
+                    @SnapMove.performed += instance.OnSnapMove;
+                    @SnapMove.canceled += instance.OnSnapMove;
                 }
             }
         }
@@ -628,6 +686,8 @@ namespace Bluaniman.SpaceGame.Input
             void OnForwardThrust(InputAction.CallbackContext context);
             void OnHorizontalThrust(InputAction.CallbackContext context);
             void OnVerticalThrust(InputAction.CallbackContext context);
+            void OnStop(InputAction.CallbackContext context);
+            void OnSnapMove(InputAction.CallbackContext context);
         }
     }
 }

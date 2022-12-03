@@ -44,6 +44,8 @@ public class SpaceshipController : MyNetworkBehavior
             networkController.BindInputAction(controls.Player.ForwardThrust);
             networkController.BindInputAction(controls.Player.HorizontalThrust);
             networkController.BindInputAction(controls.Player.VerticalThrust);
+            networkController.BindInputAction(controls.Player.Stop);
+            networkController.BindInputAction(controls.Player.SnapMove);
             virtualCamera.gameObject.SetActive(true);
             DebugHandler.NetworkLog("Spaceship bound actions.", this);
         }
