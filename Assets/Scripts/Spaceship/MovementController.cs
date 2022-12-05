@@ -25,23 +25,14 @@ namespace Bluaniman.SpaceGame.Spaceship
         public MovementData movementData;
 
         [Header("Rotation PID")]
-        private PID angularPID;
-        [SerializeField] private PidFactors angularPidFactors = new(10f, 0f, 0.1f);
-        private bool isStoppingRotation;
-        private bool wasRotationAxisInputPresentLastUpdate;
-        //showing in editor for testing purposes
-        [SerializeField] private float angularVelocityError;
-        [SerializeField] private float angularVelocityCorrection;
+        [SerializeField] private PidFactors counterRotationPidFactors = new(10f, 0f, 0.1f);
+        [SerializeField] private PIDController counterRotationPidController;
 
         [Header("Movement PID")]
-        private PID movementPID;
-        [SerializeField] private PidFactors movementPidFactors = new(1f, 0f, 0.01f);
-        private bool isStoppingMovement;
-        //showing in editor for testing purposes
-        [SerializeField] private float movementVelocityError;
-        [SerializeField] private float movementVelocityCorrection;
-        [SerializeField] private Vector3 torque;
+        [SerializeField] private PidFactors counterMovementPidFactors = new(10f, 0f, 0.1f);
+        [SerializeField] private PIDController counterMovementPidController;
 
+        #region Setup
         public void Start()
         {
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Movement controller setup start.", this);
@@ -69,93 +60,64 @@ namespace Bluaniman.SpaceGame.Spaceship
         private void DoSetup()
         {
             Rbody.isKinematic = false;
-            angularPID = new PID(angularPidFactors);
-            isStoppingRotation = false;
-            wasRotationAxisInputPresentLastUpdate = false;
-            movementPID = new PID(movementPidFactors);
-            isStoppingMovement = false;
+            counterRotationPidController = new PIDController(counterRotationPidFactors, CounterRotationStartTrigger, CounterRotationStopTrigger,
+                CounterRotationErrorFunction, CounterRotationFunction, this, "Rotation PID");
+            counterMovementPidController = new PIDController(counterMovementPidFactors, CounterThrustStartTrigger, CounterThrustStopTrigger,
+                CounterThrustErrorFunction, CounterThrustFunction, this, "Movement PID");
         }
+        #endregion
 
         private void FixedUpdate()
         {
             //DebugHandler.NetworkLog("Spaceship fixedUpdate start.", this);
             if (isMovementReady && (isServer || IsClientWithLocalControls()))
             {
-                Turn();
-                Thrust();
+                HandleMotion(0, ActivateThrusters, counterRotationPidController);
+                HandleMotion(3, ActivateEngines, counterMovementPidController);
             }
             //DebugHandler.NetworkLog("Spaceship fixedUpdate end.", this);
         }
 
-        private void Turn()
+        #region Turn & Thrust
+        private void HandleMotion(int axiiStartIndex, Action<int> activateAction, PIDController pidController)
         {
-            HandleMotion(0, ActivateThrusters, ref isStoppingRotation, RotationStoppingTrigger,
-                angularPID, angularPidFactors, Rbody.angularVelocity, ref angularVelocityError, ref angularVelocityCorrection,
-                movementData.GetDeliverableRotationThrust, ApplyAbsoluteTorque);
-        }
-
-        private bool RotationStoppingTrigger() => !AreInputAxiiPresent(0, 3);
-
-        private void Thrust()
-        {
-            HandleMotion(3, ActivateEngines, ref isStoppingMovement, ThrustStoppingTrigger,
-                movementPID, movementPidFactors, Rbody.velocity, ref movementVelocityError, ref movementVelocityCorrection,
-                movementData.GetDeliverableMovementThrust, ApplyAbsoluteForce);
-        }
-
-        private bool ThrustStoppingTrigger() => inputAxisProvider.GetInputAxis(6) != 0f;
-
-        private void HandleMotion(int axiiStartIndex, Action<int> activateAction, ref bool isStopping, Func<bool> stoppingTrigger,
-            PID stoppingPID, PidFactors startingPidFactors, Vector3 pidTarget, ref float pidError, ref float pidCorrection,
-            Func<Vector3, float> deliverableThrustFunc, Action<Vector3> applyAction)
-        {
-            bool isAxisInputPresent = AreInputAxiiPresent(axiiStartIndex, 3);
-            if (isAxisInputPresent)
+            if (inputAxisProvider.AreInputAxiiPresent(axiiStartIndex, 3))
             {
                 activateAction.Invoke(axiiStartIndex);
-                isStopping = false;
             }
             else
             {
-                if (stoppingTrigger.Invoke() && !isStopping)
-                {
-                    stoppingPID.Reset();
-                    stoppingPID.PidFactors = startingPidFactors;
-                    isStopping = true;
-                }
-                else if (!stoppingTrigger.Invoke() && isStopping)
-                {
-                    isStopping = false;
-                }
-                if (isStopping)
-                {
-                    pidError = pidTarget.magnitude;
-                    if (pidError < 1e-7)
-                    {
-                        isStopping = false;
-                    }
-                    else
-                    {
-                        pidCorrection = stoppingPID.Update(pidError, Time.fixedDeltaTime);
-                        float maxAvailableThrust = deliverableThrustFunc.Invoke(-pidTarget.normalized);
-                        if (!ApplyMovement(applyAction, pidCorrection, maxAvailableThrust, -pidTarget.normalized))
-                        {
-                            isStopping = false;
-                        }
-                    }
-                }
+                pidController.PidUpdate(Time.fixedDeltaTime);
             }
         }
 
-        private bool AreInputAxiiPresent(int startIndex, int count)
+        private bool CounterRotationStartTrigger() => !inputAxisProvider.AreInputAxiiPresent(0, 3);
+
+        private bool CounterRotationStopTrigger() => !CounterRotationStartTrigger();
+
+        private float CounterRotationErrorFunction() => Rbody.angularVelocity.magnitude;
+
+        private bool CounterRotationFunction(float pidCorrection) => CounterMovementFunction(pidCorrection,
+            movementData.GetDeliverableRotationThrust, ApplyAbsoluteTorque, Rbody.angularVelocity);
+
+        private bool CounterThrustStartTrigger() => inputAxisProvider.GetInputAxis(6) != 0f;
+
+        private bool CounterThrustStopTrigger() => !CounterThrustStartTrigger();
+
+        private float CounterThrustErrorFunction() => Rbody.velocity.magnitude;
+
+        private bool CounterThrustFunction(float pidCorrection) => CounterMovementFunction(pidCorrection,
+            movementData.GetDeliverableMovementThrust, ApplyAbsoluteForce, Rbody.velocity);
+
+        private bool CounterMovementFunction(float pidCorrection, Func<Vector3, float> deliverableThrustFunc,
+            Action<Vector3> applyAction, Vector3 directionVector)
         {
-            for (int i = startIndex; i < startIndex + count; i++)
-            {
-                if (inputAxisProvider.GetInputAxis(i) != 0f) { return true; }
-            }
-            return false;
+            float maxAvailableThrust = deliverableThrustFunc.Invoke(-directionVector.normalized);
+            return ApplyMovement(applyAction, pidCorrection, maxAvailableThrust, -directionVector.normalized);
         }
+        #endregion
 
+        #region Thrusters
         private void ActivateThrusters(Vector3 rotationAmount)
         {
             ActivateThrusters(rotationAmount.x, rotationAmount.y, rotationAmount.z);
@@ -168,11 +130,13 @@ namespace Bluaniman.SpaceGame.Spaceship
 
         private void ActivateThrusters(float pitchAmount, float yawAmount, float rollAmount)
         {
-            ApplyMovement(ApplyTorque, pitchAmount, movementData.pitchThrust, Vector3.right);
-            ApplyMovement(ApplyTorque, yawAmount, movementData.yawThrust, Vector3.up);
-            ApplyMovement(ApplyTorque, rollAmount, movementData.rollThrust, Vector3.forward);
+            ApplyMovement(ApplyRelativeTorque, pitchAmount, movementData.pitchThrust, Vector3.right);
+            ApplyMovement(ApplyRelativeTorque, yawAmount, movementData.yawThrust, Vector3.up);
+            ApplyMovement(ApplyRelativeTorque, rollAmount, movementData.rollThrust, Vector3.forward);
         }
+        #endregion
 
+        #region Engines
         private void ActivateEngines(Vector3 movementAmount)
         {
             ActivateEngines(movementAmount.x, movementAmount.y, movementAmount.z);
@@ -185,9 +149,9 @@ namespace Bluaniman.SpaceGame.Spaceship
 
         private void ActivateEngines(float forwardAmount, float horizontalAmount, float verticalAmount)
         {
-            ApplyMovement(ApplyForce, forwardAmount, movementData.forwardThrust, Vector3.forward);
-            ApplyMovement(ApplyForce, horizontalAmount, movementData.horizontalThrust, Vector3.right);
-            ApplyMovement(ApplyForce, verticalAmount, movementData.verticalThrust, Vector3.up);
+            ApplyMovement(ApplyRelativeForce, forwardAmount, movementData.forwardThrust, Vector3.forward);
+            ApplyMovement(ApplyRelativeForce, horizontalAmount, movementData.horizontalThrust, Vector3.right);
+            ApplyMovement(ApplyRelativeForce, verticalAmount, movementData.verticalThrust, Vector3.up);
         }
 
         private void ActivateOnThreeAxii(Action<float, float, float> action, int axiiStartIndex)
@@ -196,7 +160,9 @@ namespace Bluaniman.SpaceGame.Spaceship
                 inputAxisProvider.GetInputAxis(axiiStartIndex + 1),
                 inputAxisProvider.GetInputAxis(axiiStartIndex + 2));
         }
+        #endregion
 
+        #region Apply functions
         private bool ApplyMovement(Action<Vector3> thrustAction, float axisInput, RatioVector3 thrustRatio, Vector3 direction)
         {
             return ApplyMovement(thrustAction, axisInput, thrustRatio.GetThrustForDirection(axisInput), direction);
@@ -211,17 +177,19 @@ namespace Bluaniman.SpaceGame.Spaceship
             return true;
         }
 
+        private void ApplyAbsoluteTorque(Vector3 vec) => Rbody.AddTorque(vec);
+
+        private void ApplyRelativeTorque(Vector3 vec) => Rbody.AddRelativeTorque(vec);
+
+        private void ApplyAbsoluteForce(Vector3 vec) => Rbody.AddForce(vec);
+
+        private void ApplyRelativeForce(Vector3 vec) => Rbody.AddRelativeForce(vec);
+        #endregion
+
+        // TODO move to a helper class
         private static bool IsVectorNaN(Vector3 vec)
         {
             return float.IsNaN(vec.x) || float.IsNaN(vec.y) || float.IsNaN(vec.z);
         }
-
-        private void ApplyAbsoluteTorque(Vector3 vec) => Rbody.AddTorque(vec);
-
-        private void ApplyTorque(Vector3 vec) => Rbody.AddRelativeTorque(vec);
-
-        private void ApplyAbsoluteForce(Vector3 vec) => Rbody.AddForce(vec);
-
-        private void ApplyForce(Vector3 vec) => Rbody.AddRelativeForce(vec);
     }
 }

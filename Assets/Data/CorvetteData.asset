@@ -15,10 +15,28 @@ MonoBehaviour:
   mass: 10
   totalThrust: 100000
   movementThrustRatio: 1
-  forwardThrust: {x: 1, y: 1, z: 1}
-  horizontalThrust: {x: 0.1, y: 1, z: 1}
-  verticalThrust: {x: 0.1, y: 1, z: 1}
+  forwardThrust:
+    ratio: 1
+    ratioPositive: 1
+    ratioNegative: 1
+  horizontalThrust:
+    ratio: 1
+    ratioPositive: 1
+    ratioNegative: 1
+  verticalThrust:
+    ratio: 1
+    ratioPositive: 1
+    ratioNegative: 1
   rotationThrustRatio: 0.05
-  pitchThrust: {x: 1, y: 1, z: 1}
-  yawThrust: {x: 1, y: 1, z: 1}
-  rollThrust: {x: 1, y: 1, z: 1}
+  pitchThrust:
+    ratio: 1
+    ratioPositive: 1
+    ratioNegative: 1
+  yawThrust:
+    ratio: 1
+    ratioPositive: 1
+    ratioNegative: 1
+  rollThrust:
+    ratio: 1
+    ratioPositive: 1
+    ratioNegative: 1

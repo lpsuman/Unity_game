@@ -44,6 +44,8 @@ namespace Bluaniman.SpaceGame.Debugging
 		public static bool Input() => singleton.input;
 		[SerializeField] private bool coroutine;
 		public static bool Coroutine() => singleton.coroutine;
+		[SerializeField] private bool movement;
+		public static bool Movement() => singleton.movement;
 
 		[Header("Network debug")]
 		[SerializeField] private bool serverMessages;

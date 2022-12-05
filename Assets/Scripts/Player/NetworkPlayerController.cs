@@ -32,6 +32,8 @@ namespace Bluaniman.SpaceGame.Player
                 return controls;
             }
         }
+
+        #region Setup
         public void Start()
         {
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controller setup start.", this);
@@ -57,6 +59,7 @@ namespace Bluaniman.SpaceGame.Player
         {
             DebugHandler.NetworkLog($"Input axis at {index} changed to {newItem}.", this);
         }
+        #endregion
 
         [Client]
         public void BindInputAction(InputAction inputAction)
@@ -66,6 +69,7 @@ namespace Bluaniman.SpaceGame.Player
             CmdAddToInputActionSyncList();
         }
 
+        #region Input registration
         [Command]
         private void CmdAddToInputActionSyncList(NetworkConnectionToClient sender = null)
         {
@@ -109,10 +113,20 @@ namespace Bluaniman.SpaceGame.Player
             SetAxisInput(index, value);
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Called command axis input {index} to {value}", this);
         }
+        #endregion
 
         public float GetInputAxis(int index)
         {
             return isServer || !IsClientWithLocalControls() ? inputAxii[index] : inputAxiiLocal[index];
+        }
+
+        public bool AreInputAxiiPresent(int startIndex, int count)
+        {
+            for (int i = startIndex; i < startIndex + count; i++)
+            {
+                if (GetInputAxis(i) != 0f) { return true; }
+            }
+            return false;
         }
     }
 }
