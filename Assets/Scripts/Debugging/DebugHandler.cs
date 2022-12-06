@@ -1,3 +1,5 @@
+using System.Text;
+using Bluaniman.SpaceGame.Network;
 using Mirror;
 using UnityEngine;
 
@@ -12,6 +14,18 @@ namespace Bluaniman.SpaceGame.Debugging
 			public bool isServer;
 			public bool isClient;
 			public bool isOwned;
+        }
+
+		public struct DebugNameAndNetContext
+		{
+			public MyNetworkBehavior debugNetContext;
+			public string debugName;
+
+            public DebugNameAndNetContext(MyNetworkBehavior debugNetContext, string debugName)
+            {
+                this.debugNetContext = debugNetContext;
+                this.debugName = debugName;
+            }
         }
 
 		public enum AutoLobbyAction
@@ -95,12 +109,23 @@ namespace Bluaniman.SpaceGame.Debugging
 			else return Application.isEditor ^ lobbyAction == AutoLobbyAction.NonEditor;
 		}
 
+		public static void CheckAndDebugLog(bool additionalCondition, string debugMsg, DebugNameAndNetContext debugData)
+        {
+			CheckAndDebugLog(additionalCondition, debugMsg, debugData.debugNetContext);
+
+		}
+
 		public static void CheckAndDebugLog(bool additionalCondition, string debugMsg, NetworkBehaviour networkContext = null)
         {
 			if (additionalCondition)
             {
 				NetworkLog(debugMsg, networkContext);
             }
+        }
+
+		public static void NetworkLog(string debugMsg, DebugNameAndNetContext debugData)
+        {
+			NetworkLog(debugMsg, debugData.debugNetContext);
         }
 
 		public static void NetworkLog(string debugMsg, NetworkBehaviour networkContext = null)
@@ -128,17 +153,20 @@ namespace Bluaniman.SpaceGame.Debugging
 
 		public static void OnDebugNetworkMessageFromServer(DebugNetworkMessage debugNetworkMessage)
 		{
-			string msg = debugNetworkMessage.debugMsg;
+			StringBuilder sb = new();
+			sb.Append("     |");
 			if (!debugNetworkMessage.isServer && !debugNetworkMessage.isClient)
 			{
-				msg += "\nNo network context provided.";
+				sb.Append("___");
 			}
 			else
 			{
-				msg += $"\nisServer={debugNetworkMessage.isServer} isClient={debugNetworkMessage.isClient} isOwned={debugNetworkMessage.isOwned}";
-
+				sb.Append(debugNetworkMessage.isServer ? 'S' : '_');
+				sb.Append(debugNetworkMessage.isClient ? 'C' : '_');
+				sb.Append(debugNetworkMessage.isOwned ? 'O' : '_');
 			}
-			Debug.Log(msg);
+			sb.Append($"|     \t{debugNetworkMessage.debugMsg}");
+			Debug.Log(sb.ToString());
 		}
 
         private void Awake()

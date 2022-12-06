@@ -8,42 +8,86 @@ using twoloop;
 using static MovementData;
 using Bluaniman.SpaceGame.Player;
 using Bluaniman.SpaceGame.General.PID;
+using static Bluaniman.SpaceGame.General.PID.PIDController;
 
 namespace Bluaniman.SpaceGame.Spaceship
 {
-	public class MovementController : MyNetworkBehavior
+	public class MovementController : MyNetworkBehavior, IMovementController
 	{
         private const float secondsBeforeStarting = 3f;
         public Rigidbody Rbody { get; private set; }
 
-        private bool isMovementReady = false;
+        public bool IsReady { get; set; }
         public event Action OnMovementSetupDone;
+        public event Action OnReady;
 
-        private IInputAxisProvider inputAxisProvider = null;
+        private IInputController inputController;
+
+        public IInputProvider<float> InputAxiiProvider { get; set; }
+        public IInputProvider<bool> InputButtonsProvider { get; set; }
         [SerializeField] private OSNetTransform osNetTransform = null;
         [SerializeField] private OSNetRigidbody osNetRb = null;
-        public MovementData movementData;
 
-        [Header("Rotation PID")]
+        [SerializeField] private MovementData movementData;
+        public MovementData MovementData { get
+            {
+                return movementData;
+            }
+        }
+
+        [Header("Manual PIDs")]
         [SerializeField] private PidFactors counterRotationPidFactors = new(10f, 0f, 0.1f);
         [SerializeField] private PIDController counterRotationPidController;
-
-        [Header("Movement PID")]
-        [SerializeField] private PidFactors counterMovementPidFactors = new(10f, 0f, 0.1f);
+        [SerializeField] private PidFactors counterMovementPidFactors = new(0.1f, 0f, 0.001f);
         [SerializeField] private PIDController counterMovementPidController;
+
+        [Header("Automatic PIDs")]
+        [SerializeField] private PidFactors adjustHeadingPidFactors = new(10f, 0f, 0.1f);
+        [SerializeField] private PIDController adjustHeadingPidController;
+        [SerializeField] private PidFactors redirectThrustPidFactors = new(10f, 0f, 0.1f);
+        [SerializeField] private PIDController redirectThrustPidController;
+        [SerializeField] public Vector3 AutomaticHeading { get; set; }
+
+        private Vector3 autoHeadingDeltaVelocity;
+        private Vector3 autoHeadingCrossProduct;
 
         #region Setup
         public void Start()
         {
+            if (isServer || IsClientWithLocalControls())
+            {
+                inputController = GetComponent<IInputController>();
+                inputController.OnControlsSetupDone += StartAfterInputController;
+                return;
+            }
+            CommonStart();
+        }
+
+        private void StartAfterInputController()
+        {
+            InputAxiiProvider = inputController.GetInputAxisProvider();
+            InputButtonsProvider = inputController.GetInputButtonsProvider();
+            CommonStart();
+        }
+
+        private void CommonStart()
+        {
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Movement controller setup start.", this);
-            inputAxisProvider = GetComponent<IInputAxisProvider>();
             Invoke(nameof(DelayedStart), secondsBeforeStarting);
+        }
+
+        private void OnDestroy()
+        {
+            if (isServer || IsClientWithLocalControls())
+            {
+                inputController.OnControlsSetupDone -= StartAfterInputController;
+            }
         }
 
         private void DelayedStart()
         {
             Rbody = GetComponent<Rigidbody>();
-            Rbody.mass = movementData.mass;
+            Rbody.mass = MovementData.mass;
             Rbody.useGravity = false;
             if (isServer || IsClientWithLocalControls())
             {
@@ -52,36 +96,88 @@ namespace Bluaniman.SpaceGame.Spaceship
             osNetTransform.clientAuthority = useAuthorityPhysics;
             osNetRb.clientAuthority = useAuthorityPhysics;
             osNetRb.serverOnlyPhysics = !useAuthorityPhysics;
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Movement controller setup done.", this);
-            isMovementReady = true;
-            OnMovementSetupDone?.Invoke();
+            if (isServer || IsClientWithLocalControls())
+            {
+                inputController.DoWhenReady(HandleControlsFinalized);
+            }
         }
 
         private void DoSetup()
         {
             Rbody.isKinematic = false;
-            counterRotationPidController = new PIDController(counterRotationPidFactors, CounterRotationStartTrigger, CounterRotationStopTrigger,
-                CounterRotationErrorFunction, CounterRotationFunction, this, "Rotation PID");
-            counterMovementPidController = new PIDController(counterMovementPidFactors, CounterThrustStartTrigger, CounterThrustStopTrigger,
-                CounterThrustErrorFunction, CounterThrustFunction, this, "Movement PID");
+            AutomaticHeading = Vector3.zero;
+
+            PIDControllerFunctionSet counterRotationPidFuncSet = new(
+                () => !InputAxiiProvider.AreInputsPresent(0, 3),
+                () => InputAxiiProvider.AreInputsPresent(0, 3),
+                () => Rbody.angularVelocity.magnitude,
+                (float pidCorrection) => CounterMovementFunction(pidCorrection,
+                    MovementData.GetDeliverableRotationThrust, ApplyAbsoluteTorque, Rbody.angularVelocity)
+                );
+            counterRotationPidController = new PIDController(counterRotationPidFactors, counterRotationPidFuncSet, this, "Rotation PID");
+
+            PIDControllerFunctionSet counterMovementPidFuncSet = new(
+                () => InputButtonsProvider.GetInput(0),
+                () => !InputButtonsProvider.GetInput(0),
+                () => Rbody.velocity.magnitude,
+                (float pidCorrection) => CounterMovementFunction(pidCorrection,
+                    MovementData.GetDeliverableMovementThrust, ApplyAbsoluteForce, Rbody.velocity)
+                );
+            counterMovementPidController = new PIDController(counterMovementPidFactors, counterMovementPidFuncSet, this, "Movement PID");
+
+            // TODO adjust heading PID
+
+            PIDControllerFunctionSet redirectThrustPidFuncSet = new(
+                () => InputButtonsProvider.GetInput(1),
+                () => !InputButtonsProvider.GetInput(1),
+                () => autoHeadingDeltaVelocity.magnitude,
+                (float pidCorrection) => CounterMovementFunction(pidCorrection,
+                    MovementData.GetDeliverableMovementThrust, ApplyAbsoluteForce, autoHeadingDeltaVelocity)
+                );
+            redirectThrustPidController = new PIDController(redirectThrustPidFactors, redirectThrustPidFuncSet, this, "Redirect thrust PID");
+        }
+
+        private void HandleControlsFinalized()
+        {
+            IsReady = true;
+            OnReady?.Invoke();
+            OnReady = null;
+            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Movement controller setup done.", this);
         }
         #endregion
 
         private void FixedUpdate()
         {
             //DebugHandler.NetworkLog("Spaceship fixedUpdate start.", this);
-            if (isMovementReady && (isServer || IsClientWithLocalControls()))
+            if (IsReady && (isServer || IsClientWithLocalControls()))
             {
-                HandleMotion(0, ActivateThrusters, counterRotationPidController);
-                HandleMotion(3, ActivateEngines, counterMovementPidController);
+                if (!AutomaticHeadingUpdate())
+                {
+                    HandleMotion(0, ActivateThrusters, counterRotationPidController);
+                    HandleMotion(3, ActivateEngines, counterMovementPidController);
+                }
             }
             //DebugHandler.NetworkLog("Spaceship fixedUpdate end.", this);
         }
 
-        #region Turn & Thrust
+        private bool AutomaticHeadingUpdate()
+        {
+            if (AutomaticHeading != Vector3.zero)
+            {
+                autoHeadingDeltaVelocity = AutomaticHeading - Rbody.velocity;
+                autoHeadingCrossProduct = Vector3.Cross(Rbody.velocity, AutomaticHeading);
+                redirectThrustPidController.PidUpdate(Time.fixedDeltaTime);
+                return redirectThrustPidController.IsRunning;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void HandleMotion(int axiiStartIndex, Action<int> activateAction, PIDController pidController)
         {
-            if (inputAxisProvider.AreInputAxiiPresent(axiiStartIndex, 3))
+            if (InputAxiiProvider.AreInputsPresent(axiiStartIndex, 3))
             {
                 activateAction.Invoke(axiiStartIndex);
             }
@@ -91,31 +187,12 @@ namespace Bluaniman.SpaceGame.Spaceship
             }
         }
 
-        private bool CounterRotationStartTrigger() => !inputAxisProvider.AreInputAxiiPresent(0, 3);
-
-        private bool CounterRotationStopTrigger() => !CounterRotationStartTrigger();
-
-        private float CounterRotationErrorFunction() => Rbody.angularVelocity.magnitude;
-
-        private bool CounterRotationFunction(float pidCorrection) => CounterMovementFunction(pidCorrection,
-            movementData.GetDeliverableRotationThrust, ApplyAbsoluteTorque, Rbody.angularVelocity);
-
-        private bool CounterThrustStartTrigger() => inputAxisProvider.GetInputAxis(6) != 0f;
-
-        private bool CounterThrustStopTrigger() => !CounterThrustStartTrigger();
-
-        private float CounterThrustErrorFunction() => Rbody.velocity.magnitude;
-
-        private bool CounterThrustFunction(float pidCorrection) => CounterMovementFunction(pidCorrection,
-            movementData.GetDeliverableMovementThrust, ApplyAbsoluteForce, Rbody.velocity);
-
         private bool CounterMovementFunction(float pidCorrection, Func<Vector3, float> deliverableThrustFunc,
             Action<Vector3> applyAction, Vector3 directionVector)
         {
             float maxAvailableThrust = deliverableThrustFunc.Invoke(-directionVector.normalized);
             return ApplyMovement(applyAction, pidCorrection, maxAvailableThrust, -directionVector.normalized);
         }
-        #endregion
 
         #region Thrusters
         private void ActivateThrusters(Vector3 rotationAmount)
@@ -130,9 +207,9 @@ namespace Bluaniman.SpaceGame.Spaceship
 
         private void ActivateThrusters(float pitchAmount, float yawAmount, float rollAmount)
         {
-            ApplyMovement(ApplyRelativeTorque, pitchAmount, movementData.pitchThrust, Vector3.right);
-            ApplyMovement(ApplyRelativeTorque, yawAmount, movementData.yawThrust, Vector3.up);
-            ApplyMovement(ApplyRelativeTorque, rollAmount, movementData.rollThrust, Vector3.forward);
+            ApplyMovement(ApplyRelativeTorque, pitchAmount, MovementData.pitchThrust, Vector3.right);
+            ApplyMovement(ApplyRelativeTorque, yawAmount, MovementData.yawThrust, Vector3.up);
+            ApplyMovement(ApplyRelativeTorque, rollAmount, MovementData.rollThrust, Vector3.forward);
         }
         #endregion
 
@@ -149,16 +226,16 @@ namespace Bluaniman.SpaceGame.Spaceship
 
         private void ActivateEngines(float forwardAmount, float horizontalAmount, float verticalAmount)
         {
-            ApplyMovement(ApplyRelativeForce, forwardAmount, movementData.forwardThrust, Vector3.forward);
-            ApplyMovement(ApplyRelativeForce, horizontalAmount, movementData.horizontalThrust, Vector3.right);
-            ApplyMovement(ApplyRelativeForce, verticalAmount, movementData.verticalThrust, Vector3.up);
+            ApplyMovement(ApplyRelativeForce, forwardAmount, MovementData.forwardThrust, Vector3.forward);
+            ApplyMovement(ApplyRelativeForce, horizontalAmount, MovementData.horizontalThrust, Vector3.right);
+            ApplyMovement(ApplyRelativeForce, verticalAmount, MovementData.verticalThrust, Vector3.up);
         }
 
         private void ActivateOnThreeAxii(Action<float, float, float> action, int axiiStartIndex)
         {
-            action.Invoke(inputAxisProvider.GetInputAxis(axiiStartIndex),
-                inputAxisProvider.GetInputAxis(axiiStartIndex + 1),
-                inputAxisProvider.GetInputAxis(axiiStartIndex + 2));
+            action.Invoke(InputAxiiProvider.GetInput(axiiStartIndex),
+                InputAxiiProvider.GetInput(axiiStartIndex + 1),
+                InputAxiiProvider.GetInput(axiiStartIndex + 2));
         }
         #endregion
 

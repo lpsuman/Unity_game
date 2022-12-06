@@ -5,19 +5,20 @@ using Mirror;
 using Bluaniman.SpaceGame.Debugging;
 using Bluaniman.SpaceGame.Network;
 using Bluaniman.SpaceGame.Input;
-using UnityEngine.InputSystem;
-using twoloop;
+using Bluaniman.SpaceGame.General;
 
 namespace Bluaniman.SpaceGame.Player
 {
     [Serializable]
-    public class NetworkPlayerController : MyNetworkBehavior, IInputAxisProvider
+    public class NetworkPlayerController : MyNetworkBehavior, IInputController
     {
-        private readonly SyncList<float> inputAxii = new();
-        private readonly List<InputAction> inputActions = new();
-        private List<float> inputAxiiLocal;
+        public InputSyncHandler<float> InputAxiiHandler { get; private set; }
+        public InputSyncHandler<bool> InputButtonsHandler { get; private set; }
 
         public event Action OnControlsEnabled;
+        public event Action OnControlsSetupDone;
+        public bool IsReady { get; set; }
+        public event Action OnReady;
 
         private Controls controls;
         public Controls Controls
@@ -33,18 +34,20 @@ namespace Bluaniman.SpaceGame.Player
             }
         }
 
+
         #region Setup
         public void Start()
         {
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controller setup start.", this);
-            if (IsClientWithLocalControls()) { inputAxiiLocal = new(); }
+            if (isServer || IsClientWithLocalControls()) {
+                InputAxiiHandler = new InputSyncHandler<float>("axis", this);
+                InputButtonsHandler = new InputSyncHandler<bool>("button", this);
+                ((IReadiable)InputAxiiHandler).DoWhenReady(() => HandleInputHandlerFinalized(InputButtonsHandler));
+                ((IReadiable)InputButtonsHandler).DoWhenReady(() => HandleInputHandlerFinalized(InputAxiiHandler));
+            }
             if (IsClientWithOwnership())
             {
                 Controls.Enable();
-                if (DebugHandler.ShouldDebug(DebugHandler.Input()))
-                {
-                    inputAxii.Callback += OnInventoryUpdated;
-                }
                 DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controls enabled.", this);
                 OnControlsEnabled?.Invoke();
             }
@@ -53,80 +56,26 @@ namespace Bluaniman.SpaceGame.Player
                 Controls.Disable();
             }
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Controller setup done.", this);
+            OnControlsSetupDone?.Invoke();
         }
 
-        private void OnInventoryUpdated(SyncList<float>.Operation op, int index, float oldItem, float newItem)
+        private void HandleInputHandlerFinalized(AbstractInputSyncHandler other)
         {
-            DebugHandler.NetworkLog($"Input axis at {index} changed to {newItem}.", this);
-        }
-        #endregion
-
-        [Client]
-        public void BindInputAction(InputAction inputAction)
-        {
-            inputActions.Add(inputAction);
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Client added input action at {inputActions.Count - 1}", this);
-            CmdAddToInputActionSyncList();
-        }
-
-        #region Input registration
-        [Command]
-        private void CmdAddToInputActionSyncList(NetworkConnectionToClient sender = null)
-        {
-            inputAxii.Add(0f);
-            int index = inputAxii.Count - 1;
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Command added axis to list at {index}", this);
-            TargetInputBound(sender, index);
-        }
-
-        [TargetRpc]
-        private void TargetInputBound(NetworkConnection target, int index)
-        {
-            InputAction inputAction = inputActions[index];
-            inputAction.performed += ctx => CmdSetAxisInput(index, ctx.ReadValue<float>());
-            inputAction.canceled += ctx => CmdSetAxisInput(index, 0f);
-            if (IsClientWithLocalControls())
+            if (other.IsReady)
             {
-                inputAxiiLocal.Add(0f);
-                inputAction.performed += ctx => SetAxisInput(index, ctx.ReadValue<float>());
-                inputAction.canceled += ctx => SetAxisInput(index, 0f);
-            }
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Input action RPC done for index {index}", this);
-        }
-
-        public void SetAxisInput(int index, float value)
-        {
-            if (isServer || !IsClientWithLocalControls())
-            {
-                inputAxii[index] = value;
+                IsReady = true;
+                OnReady?.Invoke();
+                OnReady = null;
             }
             else
             {
-                inputAxiiLocal[index] = value;
+                DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Other input handler is not ready.");
             }
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Set axis input {index} to {value}", this);
         }
 
-        [Command]
-        private void CmdSetAxisInput(int index, float value)
-        {
-            SetAxisInput(index, value);
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Called command axis input {index} to {value}", this);
-        }
+        public IInputProvider<float> GetInputAxisProvider() => InputAxiiHandler;
+
+        public IInputProvider<bool> GetInputButtonsProvider() => InputButtonsHandler;
         #endregion
-
-        public float GetInputAxis(int index)
-        {
-            return isServer || !IsClientWithLocalControls() ? inputAxii[index] : inputAxiiLocal[index];
-        }
-
-        public bool AreInputAxiiPresent(int startIndex, int count)
-        {
-            for (int i = startIndex; i < startIndex + count; i++)
-            {
-                if (GetInputAxis(i) != 0f) { return true; }
-            }
-            return false;
-        }
     }
 }

@@ -8,12 +8,12 @@ namespace Bluaniman.SpaceGame.Network
 	public class MyNetworkBehavior : NetworkBehaviour
     {
         [SerializeField] protected bool useAuthorityPhysics = true;
-        protected bool IsClientWithOwnership()
+        public bool IsClientWithOwnership()
         {
             return isClient && isOwned;
         }
 
-        protected bool IsClientWithLocalControls()
+        public bool IsClientWithLocalControls()
         {
             return IsClientWithOwnership() && useAuthorityPhysics;
         }

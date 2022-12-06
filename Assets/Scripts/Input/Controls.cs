@@ -118,6 +118,15 @@ namespace Bluaniman.SpaceGame.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""FreeCamera"",
+                    ""type"": ""Value"",
+                    ""id"": ""315f3d91-080c-48b2-a832-4cdecf91f9d1"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -472,6 +481,17 @@ namespace Bluaniman.SpaceGame.Input
                     ""action"": ""SnapMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""97251bfa-bdd0-41e3-abc0-a5b967a99455"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FreeCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -507,6 +527,7 @@ namespace Bluaniman.SpaceGame.Input
             m_Player_VerticalThrust = m_Player.FindAction("VerticalThrust", throwIfNotFound: true);
             m_Player_Stop = m_Player.FindAction("Stop", throwIfNotFound: true);
             m_Player_SnapMove = m_Player.FindAction("SnapMove", throwIfNotFound: true);
+            m_Player_FreeCamera = m_Player.FindAction("FreeCamera", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -576,6 +597,7 @@ namespace Bluaniman.SpaceGame.Input
         private readonly InputAction m_Player_VerticalThrust;
         private readonly InputAction m_Player_Stop;
         private readonly InputAction m_Player_SnapMove;
+        private readonly InputAction m_Player_FreeCamera;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -590,6 +612,7 @@ namespace Bluaniman.SpaceGame.Input
             public InputAction @VerticalThrust => m_Wrapper.m_Player_VerticalThrust;
             public InputAction @Stop => m_Wrapper.m_Player_Stop;
             public InputAction @SnapMove => m_Wrapper.m_Player_SnapMove;
+            public InputAction @FreeCamera => m_Wrapper.m_Player_FreeCamera;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -629,6 +652,9 @@ namespace Bluaniman.SpaceGame.Input
                     @SnapMove.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapMove;
                     @SnapMove.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapMove;
                     @SnapMove.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSnapMove;
+                    @FreeCamera.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFreeCamera;
+                    @FreeCamera.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFreeCamera;
+                    @FreeCamera.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFreeCamera;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -663,6 +689,9 @@ namespace Bluaniman.SpaceGame.Input
                     @SnapMove.started += instance.OnSnapMove;
                     @SnapMove.performed += instance.OnSnapMove;
                     @SnapMove.canceled += instance.OnSnapMove;
+                    @FreeCamera.started += instance.OnFreeCamera;
+                    @FreeCamera.performed += instance.OnFreeCamera;
+                    @FreeCamera.canceled += instance.OnFreeCamera;
                 }
             }
         }
@@ -688,6 +717,7 @@ namespace Bluaniman.SpaceGame.Input
             void OnVerticalThrust(InputAction.CallbackContext context);
             void OnStop(InputAction.CallbackContext context);
             void OnSnapMove(InputAction.CallbackContext context);
+            void OnFreeCamera(InputAction.CallbackContext context);
         }
     }
 }

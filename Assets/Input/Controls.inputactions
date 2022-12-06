@@ -94,6 +94,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "FreeCamera",
+                    "type": "Value",
+                    "id": "315f3d91-080c-48b2-a832-4cdecf91f9d1",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -446,6 +455,17 @@
                     "processors": "",
                     "groups": "Keyboard & Mouse",
                     "action": "SnapMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "97251bfa-bdd0-41e3-abc0-a5b967a99455",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FreeCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

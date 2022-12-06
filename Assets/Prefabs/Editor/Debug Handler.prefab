@@ -49,7 +49,7 @@ MonoBehaviour:
   originShift: 0
   cinemachineBrainUpdating: 0
   mainMenu: 0
-  input: 0
+  input: 1
   coroutine: 0
   movement: 0
   serverMessages: 1
@@ -58,5 +58,5 @@ MonoBehaviour:
   autoHost: 1
   autoJoin: 2
   autoReady: 3
-  autoStart: 1
+  autoStart: 0
   autoStartNotAlone: 3

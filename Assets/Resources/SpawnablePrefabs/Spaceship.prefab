@@ -340,19 +340,22 @@ MonoBehaviour:
   osNetTransform: {fileID: 7962293919462791176}
   osNetRb: {fileID: 2999575278672236875}
   movementData: {fileID: 11400000, guid: 557669193e0f0954d9c5ae595a1ba074, type: 2}
-  angularPidFactors:
+  counterRotationPidFactors:
     pFactor: 10
     iFactor: 0
-    dFactor: 0.1
-  angularVelocityError: 0
-  angularVelocityCorrection: 0
-  movementPidFactors:
+    dFactor: 0.01
+  counterMovementPidFactors:
     pFactor: 0.1
     iFactor: 0
     dFactor: 0.001
-  movementVelocityError: 0
-  movementVelocityCorrection: 0
-  torque: {x: 0, y: 0, z: 0}
+  adjustHeadingPidFactors:
+    pFactor: 10
+    iFactor: 0
+    dFactor: 0.1
+  redirectThrustPidFactors:
+    pFactor: 10
+    iFactor: 0
+    dFactor: 0.1
 --- !u!54 &3075203574099729419
 Rigidbody:
   m_ObjectHideFlags: 0

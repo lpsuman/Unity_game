@@ -20,6 +20,7 @@ public class SpaceshipController : MyNetworkBehavior
     {
         movementController.OnMovementSetupDone += HandleMovementSetupDone;
         networkController.OnControlsEnabled += HandleControlsEnabled;
+        virtualCamera.gameObject.SetActive(false);
     }
 
     public void OnDestroy()
@@ -38,20 +39,19 @@ public class SpaceshipController : MyNetworkBehavior
         if (IsClientWithOwnership())
         {
             Controls controls = networkController.Controls;
-            networkController.BindInputAction(controls.Player.Pitch);
-            networkController.BindInputAction(controls.Player.Yaw);
-            networkController.BindInputAction(controls.Player.Roll);
-            networkController.BindInputAction(controls.Player.ForwardThrust);
-            networkController.BindInputAction(controls.Player.HorizontalThrust);
-            networkController.BindInputAction(controls.Player.VerticalThrust);
-            networkController.BindInputAction(controls.Player.Stop);
-            networkController.BindInputAction(controls.Player.SnapMove);
+            networkController.InputAxiiHandler.BindInput(controls.Player.Pitch);
+            networkController.InputAxiiHandler.BindInput(controls.Player.Yaw);
+            networkController.InputAxiiHandler.BindInput(controls.Player.Roll);
+            networkController.InputAxiiHandler.BindInput(controls.Player.ForwardThrust);
+            networkController.InputAxiiHandler.BindInput(controls.Player.HorizontalThrust);
+            networkController.InputAxiiHandler.BindInput(controls.Player.VerticalThrust);
+            networkController.InputAxiiHandler.FinalizeInputMapping();
+            networkController.InputButtonsHandler.BindInput(controls.Player.Stop);
+            networkController.InputButtonsHandler.BindInput(controls.Player.SnapMove);
+            networkController.InputButtonsHandler.FinalizeInputMapping();
+
             virtualCamera.gameObject.SetActive(true);
-            DebugHandler.NetworkLog("Spaceship bound actions.", this);
-        }
-        else
-        {
-            virtualCamera.gameObject.SetActive(false);
+            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Spaceship bound actions.", this);
         }
     }
 }

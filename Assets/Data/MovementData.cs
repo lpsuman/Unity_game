@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Spaceship Data", menuName = "Data/Spaceship")]
+[Serializable]
 public class MovementData : ScriptableObject
 {
     [Serializable]
