@@ -49,7 +49,7 @@ MonoBehaviour:
   originShift: 0
   cinemachineBrainUpdating: 0
   mainMenu: 0
-  input: 1
+  input: 0
   coroutine: 0
   movement: 0
   serverMessages: 1

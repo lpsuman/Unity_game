@@ -32,11 +32,13 @@ namespace Bluaniman.SpaceGame.Player
         }
 
         [Client]
-        public void BindInput(InputAction inputAction)
+        public int BindInput(InputAction inputAction)
         {
+            int currIndex = inputActions.Count;
             inputActions.Add(inputAction);
             //DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Client added input action at {inputActions.Count - 1}", debugData);
             CmdAddToInputActionSyncList();
+            return currIndex;
         }
 
         [Client]
@@ -122,15 +124,6 @@ namespace Bluaniman.SpaceGame.Player
                 throw new InvalidOperationException(InputMappingNotFinalizedExcMsg);
             }
             return ShouldUseNonLocal() ? syncList[index] : localList[index];
-        }
-
-        public bool AreInputsPresent(int startIndex, int count)
-        {
-            for (int i = startIndex; i < startIndex + count; i++)
-            {
-                if (!EqualityComparer<T>.Default.Equals(GetInput(i), default)) { return true; }
-            }
-            return false;
         }
 
         private bool ShouldUseNonLocal()

@@ -3,29 +3,29 @@ using Bluaniman.SpaceGame.Debugging;
 using Bluaniman.SpaceGame.Input;
 using Bluaniman.SpaceGame.Network;
 using Bluaniman.SpaceGame.Player;
-using Bluaniman.SpaceGame.Spaceship;
 using Cinemachine;
 using Mirror;
 using twoloop;
 using UnityEngine;
-using static MovementData;
+using static Bluaniman.SpaceGame.Player.IMovementController;
 
 public class SpaceshipController : MyNetworkBehavior
 {
-    [SerializeField] private MovementController movementController = null;
-    [SerializeField] private NetworkPlayerController networkController = null;
+    private IMovementController movementController = null;
+    private IInputController networkController = null;
     [SerializeField] private CinemachineVirtualCamera virtualCamera = null;
 
     public void Start()
     {
-        movementController.OnMovementSetupDone += HandleMovementSetupDone;
+        movementController = GetComponent<IMovementController>();
+        movementController.DoWhenReady(HandleMovementSetupDone);
+        networkController = GetComponent<IInputController>();
         networkController.OnControlsEnabled += HandleControlsEnabled;
         virtualCamera.gameObject.SetActive(false);
     }
 
     public void OnDestroy()
     {
-        movementController.OnMovementSetupDone -= HandleMovementSetupDone;
         networkController.OnControlsEnabled -= HandleControlsEnabled;
     }
 
@@ -36,19 +36,26 @@ public class SpaceshipController : MyNetworkBehavior
 
     private void HandleControlsEnabled()
     {
+        networkController.OnControlsEnabled -= HandleControlsEnabled;
         if (IsClientWithOwnership())
         {
             Controls controls = networkController.Controls;
-            networkController.InputAxiiHandler.BindInput(controls.Player.Pitch);
-            networkController.InputAxiiHandler.BindInput(controls.Player.Yaw);
-            networkController.InputAxiiHandler.BindInput(controls.Player.Roll);
-            networkController.InputAxiiHandler.BindInput(controls.Player.ForwardThrust);
-            networkController.InputAxiiHandler.BindInput(controls.Player.HorizontalThrust);
-            networkController.InputAxiiHandler.BindInput(controls.Player.VerticalThrust);
-            networkController.InputAxiiHandler.FinalizeInputMapping();
-            networkController.InputButtonsHandler.BindInput(controls.Player.Stop);
-            networkController.InputButtonsHandler.BindInput(controls.Player.SnapMove);
-            networkController.InputButtonsHandler.FinalizeInputMapping();
+            IInputProvider<float> inputAxiiHandler = networkController.GetInputAxisProvider();
+            movementController.SetBindingIndex(MovementControllerInputID.Pitch, inputAxiiHandler.BindInput(controls.Player.Pitch));
+            movementController.SetBindingIndex(MovementControllerInputID.Yaw, inputAxiiHandler.BindInput(controls.Player.Yaw));
+            movementController.SetBindingIndex(MovementControllerInputID.Roll, inputAxiiHandler.BindInput(controls.Player.Roll));
+            movementController.SetBindingIndex(MovementControllerInputID.ForwardThrust, inputAxiiHandler.BindInput(controls.Player.ForwardThrust));
+            movementController.SetBindingIndex(MovementControllerInputID.HorizontalThrust, inputAxiiHandler.BindInput(controls.Player.HorizontalThrust));
+            movementController.SetBindingIndex(MovementControllerInputID.VerticalThrust, inputAxiiHandler.BindInput(controls.Player.VerticalThrust));
+            inputAxiiHandler.BindInput(controls.Player.LookX);
+            inputAxiiHandler.BindInput(controls.Player.LookY);
+            inputAxiiHandler.FinalizeInputMapping();
+
+            IInputProvider<bool> inputButtonsHandler = networkController.GetInputButtonsProvider();
+            movementController.SetBindingIndex(MovementControllerInputID.Stop, inputButtonsHandler.BindInput(controls.Player.Stop));
+            movementController.SetBindingIndex(MovementControllerInputID.SnapMove, inputButtonsHandler.BindInput(controls.Player.SnapMove));
+            inputButtonsHandler.BindInput(controls.Player.FreeCamera);
+            inputButtonsHandler.FinalizeInputMapping();
 
             virtualCamera.gameObject.SetActive(true);
             DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Spaceship bound actions.", this);

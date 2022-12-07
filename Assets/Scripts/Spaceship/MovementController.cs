@@ -9,6 +9,7 @@ using static MovementData;
 using Bluaniman.SpaceGame.Player;
 using Bluaniman.SpaceGame.General.PID;
 using static Bluaniman.SpaceGame.General.PID.PIDController;
+using static Bluaniman.SpaceGame.Player.IMovementController;
 
 namespace Bluaniman.SpaceGame.Spaceship
 {
@@ -21,7 +22,11 @@ namespace Bluaniman.SpaceGame.Spaceship
         public event Action OnMovementSetupDone;
         public event Action OnReady;
 
+
         private IInputController inputController;
+        public Dictionary<IMovementController.MovementControllerInputID, int> InputDict { get; } = new();
+        private int[] rotationInputIDs;
+        private int[] movementInputIDs;
 
         public IInputProvider<float> InputAxiiProvider { get; set; }
         public IInputProvider<bool> InputButtonsProvider { get; set; }
@@ -49,6 +54,7 @@ namespace Bluaniman.SpaceGame.Spaceship
         [SerializeField] public Vector3 AutomaticHeading { get; set; }
 
         private Vector3 autoHeadingDeltaVelocity;
+        private float autoHeadingDeltaAngle;
         private Vector3 autoHeadingCrossProduct;
 
         #region Setup
@@ -72,7 +78,7 @@ namespace Bluaniman.SpaceGame.Spaceship
 
         private void CommonStart()
         {
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Movement controller setup start.", this);
+            DebugHandler.CheckAndDebugLog(DebugHandler.Movement(), "Movement controller setup start.", this);
             Invoke(nameof(DelayedStart), secondsBeforeStarting);
         }
 
@@ -108,8 +114,8 @@ namespace Bluaniman.SpaceGame.Spaceship
             AutomaticHeading = Vector3.zero;
 
             PIDControllerFunctionSet counterRotationPidFuncSet = new(
-                () => !InputAxiiProvider.AreInputsPresent(0, 3),
-                () => InputAxiiProvider.AreInputsPresent(0, 3),
+                CounterRotationTrigger,
+                () => !CounterRotationTrigger(),
                 () => Rbody.angularVelocity.magnitude,
                 (float pidCorrection) => CounterMovementFunction(pidCorrection,
                     MovementData.GetDeliverableRotationThrust, ApplyAbsoluteTorque, Rbody.angularVelocity)
@@ -117,19 +123,26 @@ namespace Bluaniman.SpaceGame.Spaceship
             counterRotationPidController = new PIDController(counterRotationPidFactors, counterRotationPidFuncSet, this, "Rotation PID");
 
             PIDControllerFunctionSet counterMovementPidFuncSet = new(
-                () => InputButtonsProvider.GetInput(0),
-                () => !InputButtonsProvider.GetInput(0),
+                CounterMovementTrigger,
+                () => !CounterMovementTrigger(),
                 () => Rbody.velocity.magnitude,
                 (float pidCorrection) => CounterMovementFunction(pidCorrection,
                     MovementData.GetDeliverableMovementThrust, ApplyAbsoluteForce, Rbody.velocity)
                 );
             counterMovementPidController = new PIDController(counterMovementPidFactors, counterMovementPidFuncSet, this, "Movement PID");
 
-            // TODO adjust heading PID
+            PIDControllerFunctionSet adjustHeadingPidFuncSet = new(
+                AdjustHeadingTrigger,
+                () => !AdjustHeadingTrigger(),
+                () => autoHeadingDeltaAngle,
+                (float pidCorrection) => CounterMovementFunction(pidCorrection,
+                    MovementData.GetDeliverableRotationThrust, ApplyAbsoluteTorque, autoHeadingCrossProduct)
+                );
+            adjustHeadingPidController = new PIDController(adjustHeadingPidFactors, adjustHeadingPidFuncSet, this, "Adjust heading PID");
 
             PIDControllerFunctionSet redirectThrustPidFuncSet = new(
-                () => InputButtonsProvider.GetInput(1),
-                () => !InputButtonsProvider.GetInput(1),
+                RedirectThrustTrigger,
+                () => !RedirectThrustTrigger(),
                 () => autoHeadingDeltaVelocity.magnitude,
                 (float pidCorrection) => CounterMovementFunction(pidCorrection,
                     MovementData.GetDeliverableMovementThrust, ApplyAbsoluteForce, autoHeadingDeltaVelocity)
@@ -137,12 +150,30 @@ namespace Bluaniman.SpaceGame.Spaceship
             redirectThrustPidController = new PIDController(redirectThrustPidFactors, redirectThrustPidFuncSet, this, "Redirect thrust PID");
         }
 
+        private bool CounterRotationTrigger() => !InputAxiiProvider.AreAnyInputsPresent(rotationInputIDs);
+
+        private bool CounterMovementTrigger() => InputButtonsProvider.IsInputPresent(InputDict[MovementControllerInputID.Stop]);
+
+        // maybe add separate controls
+        private bool AdjustHeadingTrigger() => InputButtonsProvider.IsInputPresent(InputDict[MovementControllerInputID.SnapMove]);
+        private bool RedirectThrustTrigger() => InputButtonsProvider.IsInputPresent(InputDict[MovementControllerInputID.SnapMove]);
+
         private void HandleControlsFinalized()
         {
+            rotationInputIDs = new int[] {
+                InputDict[MovementControllerInputID.Pitch],
+                InputDict[MovementControllerInputID.Yaw],
+                InputDict[MovementControllerInputID.Roll]
+            };
+            movementInputIDs = new int[] {
+                InputDict[MovementControllerInputID.ForwardThrust],
+                InputDict[MovementControllerInputID.HorizontalThrust],
+                InputDict[MovementControllerInputID.VerticalThrust]
+            };
             IsReady = true;
             OnReady?.Invoke();
             OnReady = null;
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), "Movement controller setup done.", this);
+            DebugHandler.CheckAndDebugLog(DebugHandler.Movement(), "Movement controller setup done.", this);
         }
         #endregion
 
@@ -153,8 +184,14 @@ namespace Bluaniman.SpaceGame.Spaceship
             {
                 if (!AutomaticHeadingUpdate())
                 {
-                    HandleMotion(0, ActivateThrusters, counterRotationPidController);
-                    HandleMotion(3, ActivateEngines, counterMovementPidController);
+                    HandleMotion(rotationInputIDs, ActivateThrusters, counterRotationPidController);
+                    HandleMotion(movementInputIDs, ActivateEngines, counterMovementPidController);
+                    //DebugHandler.CheckAndDebugLog(DebugHandler.Movement(), "Handling motion.", this);
+                }
+                else
+                {
+
+                    DebugHandler.CheckAndDebugLog(DebugHandler.Movement(), "Handled automatic heading.", this);
                 }
             }
             //DebugHandler.NetworkLog("Spaceship fixedUpdate end.", this);
@@ -165,9 +202,11 @@ namespace Bluaniman.SpaceGame.Spaceship
             if (AutomaticHeading != Vector3.zero)
             {
                 autoHeadingDeltaVelocity = AutomaticHeading - Rbody.velocity;
+                autoHeadingDeltaAngle = Vector3.Angle(Rbody.transform.forward, AutomaticHeading);
                 autoHeadingCrossProduct = Vector3.Cross(Rbody.velocity, AutomaticHeading);
+                adjustHeadingPidController.PidUpdate(Time.fixedDeltaTime);
                 redirectThrustPidController.PidUpdate(Time.fixedDeltaTime);
-                return redirectThrustPidController.IsRunning;
+                return adjustHeadingPidController.IsRunning || redirectThrustPidController.IsRunning;
             }
             else
             {
@@ -175,11 +214,11 @@ namespace Bluaniman.SpaceGame.Spaceship
             }
         }
 
-        private void HandleMotion(int axiiStartIndex, Action<int> activateAction, PIDController pidController)
+        private void HandleMotion(int[] inputIDs, Action<int[]> activateAction, PIDController pidController)
         {
-            if (InputAxiiProvider.AreInputsPresent(axiiStartIndex, 3))
+            if (InputAxiiProvider.AreAnyInputsPresent(inputIDs))
             {
-                activateAction.Invoke(axiiStartIndex);
+                activateAction.Invoke(inputIDs);
             }
             else
             {
@@ -200,9 +239,9 @@ namespace Bluaniman.SpaceGame.Spaceship
             ActivateThrusters(rotationAmount.x, rotationAmount.y, rotationAmount.z);
         }
 
-        private void ActivateThrusters(int axiiStartIndex)
+        private void ActivateThrusters(int[] axiiIDs)
         {
-            ActivateOnThreeAxii(ActivateThrusters, axiiStartIndex);
+            ActivateOnThreeAxii(ActivateThrusters, axiiIDs);
         }
 
         private void ActivateThrusters(float pitchAmount, float yawAmount, float rollAmount)
@@ -219,9 +258,9 @@ namespace Bluaniman.SpaceGame.Spaceship
             ActivateEngines(movementAmount.x, movementAmount.y, movementAmount.z);
         }
 
-        private void ActivateEngines(int axiiStartIndex)
+        private void ActivateEngines(int[] axiiIDs)
         {
-            ActivateOnThreeAxii(ActivateEngines, axiiStartIndex);
+            ActivateOnThreeAxii(ActivateEngines, axiiIDs);
         }
 
         private void ActivateEngines(float forwardAmount, float horizontalAmount, float verticalAmount)
@@ -231,11 +270,11 @@ namespace Bluaniman.SpaceGame.Spaceship
             ApplyMovement(ApplyRelativeForce, verticalAmount, MovementData.verticalThrust, Vector3.up);
         }
 
-        private void ActivateOnThreeAxii(Action<float, float, float> action, int axiiStartIndex)
+        private void ActivateOnThreeAxii(Action<float, float, float> action, int[] axiiIDs)
         {
-            action.Invoke(InputAxiiProvider.GetInput(axiiStartIndex),
-                InputAxiiProvider.GetInput(axiiStartIndex + 1),
-                InputAxiiProvider.GetInput(axiiStartIndex + 2));
+            action.Invoke(InputAxiiProvider.GetInput(axiiIDs[0]),
+                InputAxiiProvider.GetInput(axiiIDs[1]),
+                InputAxiiProvider.GetInput(axiiIDs[2]));
         }
         #endregion
 

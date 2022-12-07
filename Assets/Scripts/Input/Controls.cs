@@ -30,24 +30,6 @@ namespace Bluaniman.SpaceGame.Input
             ""id"": ""501554fb-0946-467f-a099-653f8c855f59"",
             ""actions"": [
                 {
-                    ""name"": ""Look"",
-                    ""type"": ""Value"",
-                    ""id"": ""4206aac1-aec4-4d77-8b43-39cd3a4cb920"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""Move"",
-                    ""type"": ""Value"",
-                    ""id"": ""e85a7158-90c0-4672-a09e-ddebf6284928"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
                     ""name"": ""Pitch"",
                     ""type"": ""Value"",
                     ""id"": ""c2f4dc35-96ce-44de-82fc-350cfee695f1"",
@@ -127,75 +109,27 @@ namespace Bluaniman.SpaceGame.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LookX"",
+                    ""type"": ""Value"",
+                    ""id"": ""e7539ecb-0e48-4972-9de2-233dde90aeec"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LookY"",
+                    ""type"": ""Value"",
+                    ""id"": ""e218e1b6-a190-4820-82d9-1dff42538951"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""b66e31eb-d1ab-4ae9-b537-05950604bdf8"",
-                    ""path"": ""<Mouse>/delta"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Look"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""WASD"",
-                    ""id"": ""559a6705-3518-4ce2-a846-88cf6a7c2e23"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""d2c18d97-eec1-403d-83bd-33a63656d183"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""1a44db62-ccec-4f32-bfd8-86e5e031a04f"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""1bfdb89f-fd74-4de1-a1b3-4a70395987bd"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""cba42939-0580-4bfb-833f-3fa0e79091b6"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard & Mouse"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
                 {
                     ""name"": ""Axis With Modifiers"",
                     ""id"": ""8c5c3abe-7e5b-4a4c-b467-c7c5f29b429b"",
@@ -485,11 +419,33 @@ namespace Bluaniman.SpaceGame.Input
                 {
                     ""name"": """",
                     ""id"": ""97251bfa-bdd0-41e3-abc0-a5b967a99455"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard & Mouse"",
                     ""action"": ""FreeCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f99c2da7-adde-40a5-8dbf-b0e11d78121c"",
+                    ""path"": ""<Mouse>/delta/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""LookX"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9caa9780-1a8f-4179-8d85-18827993c5c4"",
+                    ""path"": ""<Mouse>/delta/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""LookY"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -517,8 +473,6 @@ namespace Bluaniman.SpaceGame.Input
 }");
             // Player
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-            m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
-            m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
             m_Player_Pitch = m_Player.FindAction("Pitch", throwIfNotFound: true);
             m_Player_Yaw = m_Player.FindAction("Yaw", throwIfNotFound: true);
             m_Player_Roll = m_Player.FindAction("Roll", throwIfNotFound: true);
@@ -528,6 +482,8 @@ namespace Bluaniman.SpaceGame.Input
             m_Player_Stop = m_Player.FindAction("Stop", throwIfNotFound: true);
             m_Player_SnapMove = m_Player.FindAction("SnapMove", throwIfNotFound: true);
             m_Player_FreeCamera = m_Player.FindAction("FreeCamera", throwIfNotFound: true);
+            m_Player_LookX = m_Player.FindAction("LookX", throwIfNotFound: true);
+            m_Player_LookY = m_Player.FindAction("LookY", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -587,8 +543,6 @@ namespace Bluaniman.SpaceGame.Input
         // Player
         private readonly InputActionMap m_Player;
         private IPlayerActions m_PlayerActionsCallbackInterface;
-        private readonly InputAction m_Player_Look;
-        private readonly InputAction m_Player_Move;
         private readonly InputAction m_Player_Pitch;
         private readonly InputAction m_Player_Yaw;
         private readonly InputAction m_Player_Roll;
@@ -598,12 +552,12 @@ namespace Bluaniman.SpaceGame.Input
         private readonly InputAction m_Player_Stop;
         private readonly InputAction m_Player_SnapMove;
         private readonly InputAction m_Player_FreeCamera;
+        private readonly InputAction m_Player_LookX;
+        private readonly InputAction m_Player_LookY;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
             public PlayerActions(@Controls wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Look => m_Wrapper.m_Player_Look;
-            public InputAction @Move => m_Wrapper.m_Player_Move;
             public InputAction @Pitch => m_Wrapper.m_Player_Pitch;
             public InputAction @Yaw => m_Wrapper.m_Player_Yaw;
             public InputAction @Roll => m_Wrapper.m_Player_Roll;
@@ -613,6 +567,8 @@ namespace Bluaniman.SpaceGame.Input
             public InputAction @Stop => m_Wrapper.m_Player_Stop;
             public InputAction @SnapMove => m_Wrapper.m_Player_SnapMove;
             public InputAction @FreeCamera => m_Wrapper.m_Player_FreeCamera;
+            public InputAction @LookX => m_Wrapper.m_Player_LookX;
+            public InputAction @LookY => m_Wrapper.m_Player_LookY;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -622,12 +578,6 @@ namespace Bluaniman.SpaceGame.Input
             {
                 if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
                 {
-                    @Look.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
-                    @Look.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
-                    @Look.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLook;
-                    @Move.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                    @Move.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                    @Move.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
                     @Pitch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPitch;
                     @Pitch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPitch;
                     @Pitch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPitch;
@@ -655,16 +605,16 @@ namespace Bluaniman.SpaceGame.Input
                     @FreeCamera.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFreeCamera;
                     @FreeCamera.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFreeCamera;
                     @FreeCamera.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFreeCamera;
+                    @LookX.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookX;
+                    @LookX.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookX;
+                    @LookX.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookX;
+                    @LookY.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookY;
+                    @LookY.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookY;
+                    @LookY.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookY;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
                 {
-                    @Look.started += instance.OnLook;
-                    @Look.performed += instance.OnLook;
-                    @Look.canceled += instance.OnLook;
-                    @Move.started += instance.OnMove;
-                    @Move.performed += instance.OnMove;
-                    @Move.canceled += instance.OnMove;
                     @Pitch.started += instance.OnPitch;
                     @Pitch.performed += instance.OnPitch;
                     @Pitch.canceled += instance.OnPitch;
@@ -692,6 +642,12 @@ namespace Bluaniman.SpaceGame.Input
                     @FreeCamera.started += instance.OnFreeCamera;
                     @FreeCamera.performed += instance.OnFreeCamera;
                     @FreeCamera.canceled += instance.OnFreeCamera;
+                    @LookX.started += instance.OnLookX;
+                    @LookX.performed += instance.OnLookX;
+                    @LookX.canceled += instance.OnLookX;
+                    @LookY.started += instance.OnLookY;
+                    @LookY.performed += instance.OnLookY;
+                    @LookY.canceled += instance.OnLookY;
                 }
             }
         }
@@ -707,8 +663,6 @@ namespace Bluaniman.SpaceGame.Input
         }
         public interface IPlayerActions
         {
-            void OnLook(InputAction.CallbackContext context);
-            void OnMove(InputAction.CallbackContext context);
             void OnPitch(InputAction.CallbackContext context);
             void OnYaw(InputAction.CallbackContext context);
             void OnRoll(InputAction.CallbackContext context);
@@ -718,6 +672,8 @@ namespace Bluaniman.SpaceGame.Input
             void OnStop(InputAction.CallbackContext context);
             void OnSnapMove(InputAction.CallbackContext context);
             void OnFreeCamera(InputAction.CallbackContext context);
+            void OnLookX(InputAction.CallbackContext context);
+            void OnLookY(InputAction.CallbackContext context);
         }
     }
 }
