@@ -40,17 +40,6 @@ namespace Bluaniman.SpaceGame.Lobby
             }
         }
 
-        private MyNetworkManager room;
-
-        private MyNetworkManager Room
-        {
-            get
-            {
-                if (room != null) { return room; }
-                return room = NetworkManager.singleton as MyNetworkManager;
-            }
-        }
-
         public override void OnStartAuthority()
         {
             CmdSetDisplayName(PlayerNameInput.DisplayName);
@@ -60,7 +49,7 @@ namespace Bluaniman.SpaceGame.Lobby
         {
             lobbyUI.SetActive(isOwned);
             startGameButton.interactable = false;
-            Room.RoomPlayers.Add(this);
+            networkManager.RoomPlayers.Add(this);
             UpdateDisplay();
             if (isOwned && DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoReady()))
             {
@@ -70,7 +59,7 @@ namespace Bluaniman.SpaceGame.Lobby
 
         public override void OnStopClient()
         {
-            Room.RoomPlayers.Remove(this);
+            networkManager.RoomPlayers.Remove(this);
             if (isOwned)
             {
                 FindObjectOfType<MainMenu>().ShowLandingPage();
@@ -84,7 +73,7 @@ namespace Bluaniman.SpaceGame.Lobby
         {
             if (!isOwned)
             {
-                foreach (MyNetworkRoomPlayer player in Room.RoomPlayers)
+                foreach (MyNetworkRoomPlayer player in networkManager.RoomPlayers)
                 {
                     if (player.isOwned)
                     {
@@ -97,10 +86,10 @@ namespace Bluaniman.SpaceGame.Lobby
 
             for (int i = 0; i < playerNameTexts.Length; i++)
             {
-                if (i < Room.RoomPlayers.Count)
+                if (i < networkManager.RoomPlayers.Count)
                 {
-                    playerNameTexts[i].text = Room.RoomPlayers[i].DisplayName;
-                    playerReadyTexts[i].text = Room.RoomPlayers[i].IsReady ?
+                    playerNameTexts[i].text = networkManager.RoomPlayers[i].DisplayName;
+                    playerReadyTexts[i].text = networkManager.RoomPlayers[i].IsReady ?
                         "<color=green>Ready</color>" :
                         "<color=red>Not Ready</color>";
                 } else
@@ -118,7 +107,7 @@ namespace Bluaniman.SpaceGame.Lobby
             startGameButton.interactable = readyToStart;
             if (startGameButton.interactable && 
                    (DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoStart())
-                || (DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoStartNotAlone()) && Room.RoomPlayers.Count > 1)))
+                || (DebugHandler.ShouldAutoLobbyAction(DebugHandler.AutoStartNotAlone()) && networkManager.RoomPlayers.Count > 1)))
             {
                 startGameButton.onClick.Invoke();
             }
@@ -134,31 +123,14 @@ namespace Bluaniman.SpaceGame.Lobby
         public void CmdReadyUp()
         {
             IsReady = !IsReady;
-            Room.NotifyPlayersOfReadyState();
+            networkManager.NotifyPlayersOfReadyState();
         }
 
         [Command]
         public void CmdStartGame()
         {
-            if (Room.RoomPlayers[0].connectionToClient != connectionToClient) { return; }
-            Room.StartGame();
-        }
-
-        public void LeaveLobby()
-        {
-            MyNetworkManager myNetworkManager = FindObjectOfType<MyNetworkManager>();
-            if (isServer && isClient)
-            {
-                myNetworkManager.StopHost();
-            }
-            else if (isServer)
-            {
-                myNetworkManager.StopServer();
-            }
-            else
-            {
-                myNetworkManager.StopClient();
-            }
+            if (networkManager.RoomPlayers[0].connectionToClient != connectionToClient) { return; }
+            networkManager.StartGame();
         }
     }
 }

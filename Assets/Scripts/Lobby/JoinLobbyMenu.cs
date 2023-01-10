@@ -1,4 +1,4 @@
-using System;
+using Bluaniman.SpaceGame.General;
 using Bluaniman.SpaceGame.Networking;
 using TMPro;
 using UnityEngine;
@@ -8,8 +8,6 @@ namespace Bluaniman.SpaceGame.Lobby
 {
     public class JoinLobbyMenu : MonoBehaviour
     {
-        [SerializeField] private MyNetworkManager networkManager = null;
-
         [Header("UI")]
         [SerializeField] private GameObject landingPanel = null;
         [SerializeField] private TMP_InputField ipAddressInputField = null;
@@ -18,14 +16,20 @@ namespace Bluaniman.SpaceGame.Lobby
 
         private void OnEnable()
         {
-            MyNetworkManager.OnClientConnected += HandleClientConnected;
-            MyNetworkManager.OnClientDisconnected += HandleClientDisconnected;
+            Globals.networkManager.OnClientConnected += HandleClientConnected;
+            Globals.networkManager.OnClientDisconnected += HandleClientDisconnected;
         }
 
         private void OnDisable()
         {
-            MyNetworkManager.OnClientConnected -= HandleClientConnected;
-            MyNetworkManager.OnClientDisconnected -= HandleClientDisconnected;
+            Globals.networkManager.OnClientConnected -= HandleClientConnected;
+            Globals.networkManager.OnClientDisconnected -= HandleClientDisconnected;
+        }
+
+        private void OnDestroy()
+        {
+            Globals.networkManager.OnClientConnected -= HandleClientConnected;
+            Globals.networkManager.OnClientDisconnected -= HandleClientDisconnected;
         }
 
         private void HandleClientConnected()
@@ -51,8 +55,8 @@ namespace Bluaniman.SpaceGame.Lobby
             string ipAddress = ipAddressInputField.text;
             Debug.Log($"Trying to join with address: {ipAddress}");
             SetButtonsInteractable(false);
-            networkManager.networkAddress = ipAddress;
-            networkManager.StartClient();
+            Globals.networkManager.networkAddress = ipAddress;
+            Globals.networkManager.StartClient();
         }
     }
 }

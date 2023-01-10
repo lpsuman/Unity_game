@@ -10,7 +10,7 @@ using Bluaniman.SpaceGame.General;
 namespace Bluaniman.SpaceGame.Player
 {
     [Serializable]
-    public class NetworkPlayerController : MyNetworkBehavior, IInputController
+    public class NetworkPlayerController : MyNetworkPhysicsBehavior, IInputController
     {
         public InputSyncHandler<float> InputAxiiHandler { get; private set; }
         public InputSyncHandler<bool> InputButtonsHandler { get; private set; }
@@ -33,7 +33,6 @@ namespace Bluaniman.SpaceGame.Player
                 return controls;
             }
         }
-
 
         #region Setup
         public void Start()

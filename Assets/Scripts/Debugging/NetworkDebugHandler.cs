@@ -7,7 +7,7 @@ namespace Bluaniman.SpaceGame.Debugging
 {
 	public class NetworkDebugHandler : NetworkBehaviour
 	{
-		private void Start()
+        private void Start()
 		{
 			if (DebugHandler.ShouldDebug())
 			{

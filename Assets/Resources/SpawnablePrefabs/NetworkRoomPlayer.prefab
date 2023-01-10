@@ -787,11 +787,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8853439500574290036, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LeaveLobby
+      value: LeaveGame
       objectReference: {fileID: 0}
     - target: {fileID: 8853439500574290036, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Bluaniman.SpaceGame.Lobby.MyNetworkRoomPlayer, Assembly-CSharp
+      value: Bluaniman.SpaceGame.Network.MyNetworkBehavior, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8853439500574290036, guid: cb0e8a1601acca2499312571c26ff102, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

@@ -4,35 +4,31 @@ using Mirror;
 using Bluaniman.SpaceGame.Networking;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using Bluaniman.SpaceGame.Network;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
-    public class MyNetworkGamePlayer : NetworkBehaviour
+    public class MyNetworkGamePlayer : MyNetworkBehavior
     {
-
         [SyncVar]
-        private string displayName = "Loading...";
-
-        private MyNetworkManager room;
-
-        private MyNetworkManager Room
-        {
-            get
-            {
-                if (room != null) { return room; }
-                return room = NetworkManager.singleton as MyNetworkManager;
-            }
-        }
+        public string displayName = "Loading...";
 
         public override void OnStartClient()
         {
             DontDestroyOnLoad(gameObject);
-            Room.GamePlayers.Add(this);
+            networkManager.GamePlayers.Add(this);
         }
 
         public override void OnStopClient()
         {
-            Room.GamePlayers.Remove(this);
+            networkManager.GamePlayers.Remove(this);
+            Destroy(gameObject);
+        }
+
+        public override void OnStopLocalPlayer()
+        {
+            SceneManager.LoadScene(networkManager.menuScene);
         }
 
         [Server]

@@ -14,22 +14,25 @@ namespace Bluaniman.SpaceGame.Networking
         private const string spawnablePrefabsFolderPath = "SpawnablePrefabs";
         public const int MinPlayers = 1;
         private const string gameSceneNamePrefix = "Scene Map";
-        [Scene] [SerializeField] private string menuScene = string.Empty;
+        [Scene] [SerializeField] private string initScene = string.Empty;
+        [Scene] [SerializeField] public string menuScene = string.Empty;
 
         [Header("Room")]
         [SerializeField] private MyNetworkRoomPlayer roomPlayerPrefab = null;
 
         [Header("Game")]
         [SerializeField] private MyNetworkGamePlayer gamePlayerPrefab = null;
+        [SerializeField] private PlayerEventHandler playerEventHandlerPrefab = null;
         [SerializeField] private int sceneMapId = 1;
 
-        public static event Action OnClientConnected;
-        public static event Action OnClientDisconnected;
-        public static event Action<NetworkConnectionToClient> OnServerReadied;
+        public event Action OnClientConnected;
+        public event Action OnClientDisconnected;
+        public event Action<NetworkConnectionToClient> OnServerReadied;
 
         public List<MyNetworkRoomPlayer> RoomPlayers { get; } = new();
         public List<MyNetworkGamePlayer> GamePlayers { get; } = new();
-
+        public Dictionary<int, MyNetworkGamePlayer> connIdToPlayerDict = new();
+        public List<PlayerEventHandler> playerEventHandlerList = new();
 
         public override void OnStartServer() => spawnPrefabs = Resources.LoadAll<GameObject>(spawnablePrefabsFolderPath).ToList();
 
@@ -39,6 +42,14 @@ namespace Bluaniman.SpaceGame.Networking
             foreach (var prefab in spawnablePrefabs)
             {
                 NetworkClient.RegisterPrefab(prefab);
+            }
+        }
+
+        public void OnEnable()
+        {
+            if (SceneManager.GetActiveScene().path == initScene)
+            {
+                SceneManager.LoadScene(menuScene);
             }
         }
 
@@ -98,6 +109,7 @@ namespace Bluaniman.SpaceGame.Networking
         public override void OnStopServer()
         {
             RoomPlayers.Clear();
+            GamePlayers.Clear();
         }
 
         public void NotifyPlayersOfReadyState()
@@ -134,10 +146,18 @@ namespace Bluaniman.SpaceGame.Networking
                 for (int i = RoomPlayers.Count - 1; i >= 0; i--)
                 {
                     NetworkConnectionToClient conn = RoomPlayers[i].connectionToClient;
+
                     MyNetworkGamePlayer gamePlayerInstance = Instantiate(gamePlayerPrefab);
                     gamePlayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
                     NetworkServer.Destroy(conn.identity.gameObject);
                     NetworkServer.ReplacePlayerForConnection(conn, gamePlayerInstance.gameObject);
+                    connIdToPlayerDict[conn.connectionId] = gamePlayerInstance;
+                    gamePlayerInstance.OnDestroyed += () => connIdToPlayerDict.Remove(conn.connectionId);
+
+                    PlayerEventHandler playerEventHandlerInstance = Instantiate(playerEventHandlerPrefab);
+                    NetworkServer.Spawn(playerEventHandlerInstance.gameObject, conn);
+                    playerEventHandlerList.Add(playerEventHandlerInstance);
+                    playerEventHandlerInstance.OnDestroyed += () => playerEventHandlerList.Remove(playerEventHandlerInstance);
                 }
             }
             base.ServerChangeScene(newSceneName);
@@ -147,6 +167,15 @@ namespace Bluaniman.SpaceGame.Networking
         {
             base.OnServerReady(conn);
             OnServerReadied?.Invoke(conn);
+        }
+
+        public override void OnClientSceneChanged()
+        {
+            base.OnClientSceneChanged();
+            if (SceneManager.GetActiveScene().path == menuScene)
+            {
+                FindObjectOfType<MainMenu>().ShowLandingPage();
+            }
         }
     }
 }

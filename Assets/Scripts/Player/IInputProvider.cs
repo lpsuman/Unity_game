@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Bluaniman.SpaceGame.General;
 using UnityEngine.InputSystem;
@@ -6,8 +7,8 @@ namespace Bluaniman.SpaceGame.Player
 {
 	public interface IInputProvider<T> : IReadiable where T : struct
 	{
-		int BindInput(InputAction inputAction);
-		void FinalizeInputMapping();
+		int BindInput(InputAction inputAction, bool debugIgnoreInput = false);
+		void FinalizeInputMapping(bool ignoreEmpty = false);
 		T GetInput(int index);
 
         public bool AreAnyInputsPresentInterval(int startIndex, int count)
@@ -32,5 +33,7 @@ namespace Bluaniman.SpaceGame.Player
         }
 
         bool IsInputPresent(int index) => !EqualityComparer<T>.Default.Equals(GetInput(index), default);
+
+        void BindClientsideInput(InputAction inputAction, Action callback);
     }
 }

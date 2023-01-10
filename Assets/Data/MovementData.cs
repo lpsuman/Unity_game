@@ -45,7 +45,10 @@ public class MovementData : ScriptableObject
         [SerializeField] private float ratioNegative;
         public float RatioNegative
         {
-            get { return ratioNegative; }
+            get
+            {
+                return ratioNegative;
+            }
             set
             {
                 float changeRatio = value / ratioNegative;

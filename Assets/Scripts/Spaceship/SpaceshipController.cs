@@ -47,8 +47,8 @@ public class SpaceshipController : MyNetworkBehavior
             movementController.SetBindingIndex(MovementControllerInputID.ForwardThrust, inputAxiiHandler.BindInput(controls.Player.ForwardThrust));
             movementController.SetBindingIndex(MovementControllerInputID.HorizontalThrust, inputAxiiHandler.BindInput(controls.Player.HorizontalThrust));
             movementController.SetBindingIndex(MovementControllerInputID.VerticalThrust, inputAxiiHandler.BindInput(controls.Player.VerticalThrust));
-            inputAxiiHandler.BindInput(controls.Player.LookX);
-            inputAxiiHandler.BindInput(controls.Player.LookY);
+            inputAxiiHandler.BindInput(controls.Player.LookX, true);
+            inputAxiiHandler.BindInput(controls.Player.LookY, true);
             inputAxiiHandler.FinalizeInputMapping();
 
             IInputProvider<bool> inputButtonsHandler = networkController.GetInputButtonsProvider();

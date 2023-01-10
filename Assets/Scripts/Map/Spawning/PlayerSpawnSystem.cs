@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System.Linq;
-using Bluaniman.SpaceGame.Networking;
 using twoloop;
 using Bluaniman.SpaceGame.Debugging;
+using Bluaniman.SpaceGame.General;
 
 namespace Bluaniman.SpaceGame.Lobby
 {
@@ -31,11 +30,11 @@ namespace Bluaniman.SpaceGame.Lobby
             spawnPoints.Remove(transform);
         }
 
-        public override void OnStartServer() => MyNetworkManager.OnServerReadied += SpawnPlayer;
+        public override void OnStartServer() => Globals.networkManager.OnServerReadied += SpawnPlayer;
 
         [ServerCallback]
 
-        private void OnDestroy() => MyNetworkManager.OnServerReadied -= SpawnPlayer;
+        private void OnDestroy() => Globals.networkManager.OnServerReadied -= SpawnPlayer;
 
         [Server]
         public void SpawnPlayer(NetworkConnectionToClient conn)

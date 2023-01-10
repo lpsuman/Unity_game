@@ -143,7 +143,10 @@ namespace Bluaniman.SpaceGame.Debugging
 				isClient = networkContext != null && networkContext.isClient,
 				isOwned = networkContext != null && networkContext.isOwned
 			};
-			NetworkClient.Send(debugNetworkMessage);
+			if (NetworkClient.isConnected)
+            {
+				NetworkClient.Send(debugNetworkMessage);
+			}
 		}
 
 		public static void OnDebugNetworkMessageFromClient(NetworkConnectionToClient conn, DebugNetworkMessage debugNetworkMessage)
@@ -170,16 +173,11 @@ namespace Bluaniman.SpaceGame.Debugging
 		}
 
         private void Awake()
-        {
+		{
 			if (singleton == null)
 			{
 				singleton = this;
 			}
-		}
-
-        private void Start()
-		{
-			DontDestroyOnLoad(this);
 		}
     }
 }

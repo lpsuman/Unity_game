@@ -1,4 +1,3 @@
-using System;
 using Bluaniman.SpaceGame.Debugging;
 using Bluaniman.SpaceGame.General;
 using Bluaniman.SpaceGame.Networking;
@@ -9,8 +8,6 @@ namespace Bluaniman.SpaceGame.Lobby
 {
     public class MainMenu : MonoBehaviour
     {
-        [SerializeField] private MyNetworkManager networkManager = null;
-
         [Header("UI")]
         [SerializeField] private GameObject nameInputPanel = null;
         [SerializeField] private GameObject landingPanel = null;
@@ -49,7 +46,7 @@ namespace Bluaniman.SpaceGame.Lobby
         }
         public void HostLobby()
         {
-            networkManager.StartHost();
+            Globals.networkManager.StartHost();
             landingPanel.SetActive(false);
         }
 

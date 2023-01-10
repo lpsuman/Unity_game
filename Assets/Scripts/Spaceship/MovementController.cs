@@ -13,7 +13,7 @@ using static Bluaniman.SpaceGame.Player.IMovementController;
 
 namespace Bluaniman.SpaceGame.Spaceship
 {
-	public class MovementController : MyNetworkBehavior, IMovementController
+	public class MovementController : MyNetworkPhysicsBehavior, IMovementController
 	{
         private const float secondsBeforeStarting = 3f;
         public Rigidbody Rbody { get; private set; }
@@ -171,6 +171,7 @@ namespace Bluaniman.SpaceGame.Spaceship
                 InputDict[MovementControllerInputID.VerticalThrust]
             };
             IsReady = true;
+
             OnReady?.Invoke();
             OnReady = null;
             DebugHandler.CheckAndDebugLog(DebugHandler.Movement(), "Movement controller setup done.", this);

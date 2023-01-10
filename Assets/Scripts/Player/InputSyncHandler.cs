@@ -8,10 +8,16 @@ using UnityEngine.InputSystem;
 
 namespace Bluaniman.SpaceGame.Player
 {
+    /// <summary>
+    /// Handles inputs of a single type. Input axii (yaw, pitch, roll, thrust, etc.) have float as T, while keyboard keys
+    /// (modifiers like Ctrl, Shift, etc.) have bool as T. After binding the input actions, FinalizeInputMapping() has to be called.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class InputSyncHandler<T> : AbstractInputSyncHandler, IInputProvider<T> where T : struct, IEquatable<T>
     {
         private readonly SyncList<T> syncList = new();
         private readonly List<T> localList;
+        private readonly List<bool> debugIgnoredInputs = new();
 
         public override bool IsReady { get; set; }
         public override event Action OnReady;
@@ -26,30 +32,33 @@ namespace Bluaniman.SpaceGame.Player
 
             if (DebugHandler.ShouldDebug(DebugHandler.Input()))
             {
-                syncList.Callback += (op, index, oldItem, newItem)
-                    => DebugHandler.NetworkLog($"Input {debugData.debugName} at {index} changed to {newItem}.", debugData);
+                syncList.Callback += (op, index, oldItem, newItem) =>
+                {
+                    if (!debugIgnoredInputs[index]) { DebugHandler.NetworkLog($"Input {debugData.debugName} at {index} changed to {newItem}.", debugData); }
+                };
             }
         }
 
         [Client]
-        public int BindInput(InputAction inputAction)
+        public int BindInput(InputAction inputAction, bool debugIgnoreInput = false)
         {
             int currIndex = inputActions.Count;
             inputActions.Add(inputAction);
+            debugIgnoredInputs.Add(debugIgnoreInput);
             //DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Client added input action at {inputActions.Count - 1}", debugData);
             CmdAddToInputActionSyncList();
             return currIndex;
         }
 
         [Client]
-        public void FinalizeInputMapping()
+        public void FinalizeInputMapping(bool ignoreIfEmpty = false)
         {
             if (IsReady)
             {
                 DebugHandler.NetworkLog(InputMappingAlreadyFinalizedExcMsg);
                 throw new InvalidOperationException(InputMappingAlreadyFinalizedExcMsg);
             }
-            if (syncList.Count == 0)
+            if (!ignoreIfEmpty && syncList.Count == 0)
             {
                 DebugHandler.NetworkLog(InputMappingEmptyExcMsg);
                 throw new InvalidOperationException(InputMappingEmptyExcMsg);
@@ -106,14 +115,20 @@ namespace Bluaniman.SpaceGame.Player
             {
                 localList[index] = value;
             }
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Set axis input {index} to {value}", debugData);
+            if (!debugIgnoredInputs[index])
+            {
+                DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Set axis input {index} to {value}", debugData);
+            }
         }
 
         [Command]
         private void CmdSetInput(int index, T value)
         {
             SetInput(index, value);
-            DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Called command axis input {index} to {value}", debugData);
+            if (!debugIgnoredInputs[index])
+            {
+                DebugHandler.CheckAndDebugLog(DebugHandler.Input(), $"Called command axis input {index} to {value}", debugData);
+            }
         }
 
         public T GetInput(int index)
@@ -129,6 +144,11 @@ namespace Bluaniman.SpaceGame.Player
         private bool ShouldUseNonLocal()
         {
             return debugData.debugNetContext.isServer || !debugData.debugNetContext.IsClientWithLocalControls();
+        }
+
+        public void BindClientsideInput(InputAction inputAction, Action callback)
+        {
+            inputAction.performed += ctx => callback.Invoke();
         }
     }
 }

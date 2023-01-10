@@ -127,6 +127,15 @@ namespace Bluaniman.SpaceGame.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Menu"",
+                    ""type"": ""Button"",
+                    ""id"": ""f3e3a48b-cbc3-4cae-a0f2-0a6155e56ed2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -448,6 +457,17 @@ namespace Bluaniman.SpaceGame.Input
                     ""action"": ""LookY"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4145e1fd-2ce4-4dab-b0a0-ddbdfca84d36"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & Mouse"",
+                    ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -484,6 +504,7 @@ namespace Bluaniman.SpaceGame.Input
             m_Player_FreeCamera = m_Player.FindAction("FreeCamera", throwIfNotFound: true);
             m_Player_LookX = m_Player.FindAction("LookX", throwIfNotFound: true);
             m_Player_LookY = m_Player.FindAction("LookY", throwIfNotFound: true);
+            m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -554,6 +575,7 @@ namespace Bluaniman.SpaceGame.Input
         private readonly InputAction m_Player_FreeCamera;
         private readonly InputAction m_Player_LookX;
         private readonly InputAction m_Player_LookY;
+        private readonly InputAction m_Player_Menu;
         public struct PlayerActions
         {
             private @Controls m_Wrapper;
@@ -569,6 +591,7 @@ namespace Bluaniman.SpaceGame.Input
             public InputAction @FreeCamera => m_Wrapper.m_Player_FreeCamera;
             public InputAction @LookX => m_Wrapper.m_Player_LookX;
             public InputAction @LookY => m_Wrapper.m_Player_LookY;
+            public InputAction @Menu => m_Wrapper.m_Player_Menu;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -611,6 +634,9 @@ namespace Bluaniman.SpaceGame.Input
                     @LookY.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookY;
                     @LookY.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookY;
                     @LookY.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLookY;
+                    @Menu.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
+                    @Menu.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
+                    @Menu.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -648,6 +674,9 @@ namespace Bluaniman.SpaceGame.Input
                     @LookY.started += instance.OnLookY;
                     @LookY.performed += instance.OnLookY;
                     @LookY.canceled += instance.OnLookY;
+                    @Menu.started += instance.OnMenu;
+                    @Menu.performed += instance.OnMenu;
+                    @Menu.canceled += instance.OnMenu;
                 }
             }
         }
@@ -674,6 +703,7 @@ namespace Bluaniman.SpaceGame.Input
             void OnFreeCamera(InputAction.CallbackContext context);
             void OnLookX(InputAction.CallbackContext context);
             void OnLookY(InputAction.CallbackContext context);
+            void OnMenu(InputAction.CallbackContext context);
         }
     }
 }
