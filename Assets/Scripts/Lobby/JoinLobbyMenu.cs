@@ -1,5 +1,4 @@
 using Bluaniman.SpaceGame.General;
-using Bluaniman.SpaceGame.Networking;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +8,7 @@ namespace Bluaniman.SpaceGame.Lobby
     public class JoinLobbyMenu : MonoBehaviour
     {
         [Header("UI")]
-        [SerializeField] private GameObject landingPanel = null;
+        [SerializeField] private MainMenu mainMenu = null;
         [SerializeField] private TMP_InputField ipAddressInputField = null;
         [SerializeField] private Button joinButton = null;
         [SerializeField] private Button cancelButton = null;
@@ -36,7 +35,7 @@ namespace Bluaniman.SpaceGame.Lobby
         {
             SetButtonsInteractable(true);
             gameObject.SetActive(false);
-            landingPanel.SetActive(false);
+            mainMenu.HideAllPanels();
         }
 
         private void HandleClientDisconnected()
@@ -53,7 +52,7 @@ namespace Bluaniman.SpaceGame.Lobby
         public void JoinLobby()
         {
             string ipAddress = ipAddressInputField.text;
-            Debug.Log($"Trying to join with address: {ipAddress}");
+            //Debug.Log($"Trying to join with address: {ipAddress}");
             SetButtonsInteractable(false);
             Globals.networkManager.networkAddress = ipAddress;
             Globals.networkManager.StartClient();

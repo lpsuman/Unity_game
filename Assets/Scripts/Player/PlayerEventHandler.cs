@@ -33,11 +33,7 @@ namespace Bluaniman.SpaceGame
         public void RpcGamePaused(string pausingPlayer)
         {
             Time.timeScale = 0f;
-            if (NetworkClient.localPlayer.gameObject.GetComponent<MyNetworkGamePlayer>().displayName == pausingPlayer)
-            {
-                pausingPlayer = "you";
-            }
-            OnGamePaused?.Invoke(pausingPlayer);
+            OnGamePaused?.Invoke(CheckIfLocalPlayer(pausingPlayer));
 
         }
 
@@ -54,7 +50,18 @@ namespace Bluaniman.SpaceGame
         public void RpcGameUnpaused(string unpausingPlayer)
         {
             Time.timeScale = 1f;
-            OnGameUnpaused?.Invoke(unpausingPlayer);
+            OnGameUnpaused?.Invoke(CheckIfLocalPlayer(unpausingPlayer));
+        }
+
+        private static string CheckIfLocalPlayer(string playerName)
+        {
+            if (NetworkClient.localPlayer.gameObject.GetComponent<MyNetworkGamePlayer>().displayName == playerName)
+            {
+                return "you";
+            } else
+            {
+                return playerName;
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Bluaniman.SpaceGame.Networking
         private const string gameSceneNamePrefix = "Scene Map";
         [Scene] [SerializeField] private string initScene = string.Empty;
         [Scene] [SerializeField] public string menuScene = string.Empty;
+        [Scene] [SerializeField] public string gameScene = string.Empty;
 
         [Header("Room")]
         [SerializeField] private MyNetworkRoomPlayer roomPlayerPrefab = null;

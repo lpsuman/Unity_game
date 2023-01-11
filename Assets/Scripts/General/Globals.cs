@@ -7,5 +7,7 @@ namespace Bluaniman.SpaceGame.General
 	{
 		public static MyNetworkManager networkManager;
 		public static DebugHandler debugHandler;
+
+		public static bool hasRegisteredDbgNetMsgHandlers = false;
 	}
 }

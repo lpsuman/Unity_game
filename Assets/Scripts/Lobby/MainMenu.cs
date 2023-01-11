@@ -18,6 +18,7 @@ namespace Bluaniman.SpaceGame.Lobby
         [SerializeField] private Button hostButton = null;
         [SerializeField] private Button joinButton = null;
         [SerializeField] private Button confirmIpButton = null;
+        [SerializeField] private Button exitGameButton = null;
 
         private void Start()
         {
@@ -47,12 +48,46 @@ namespace Bluaniman.SpaceGame.Lobby
         public void HostLobby()
         {
             Globals.networkManager.StartHost();
-            landingPanel.SetActive(false);
+            HideAllPanels();
+        }
+
+        public void ShowNameInputPanel()
+        {
+            nameInputPanel.SetActive(true);
+            SetLandingPageVisible(false);
+            ipAddressInputPanel.SetActive(false);
         }
 
         public void ShowLandingPage()
         {
-            landingPanel.SetActive(true);
+            nameInputPanel.SetActive(false);
+            SetLandingPageVisible(true);
+            ipAddressInputPanel.SetActive(false);
+        }
+
+        public void ShowIpAddressInputPanel()
+        {
+            nameInputPanel.SetActive(false);
+            SetLandingPageVisible(false);
+            ipAddressInputPanel.SetActive(true);
+        }
+
+        public void HideAllPanels()
+        {
+            nameInputPanel.SetActive(false);
+            SetLandingPageVisible(false);
+            ipAddressInputPanel.SetActive(false);
+        }
+
+        private void SetLandingPageVisible(bool isVisible)
+        {
+            landingPanel.SetActive(isVisible);
+            exitGameButton.gameObject.SetActive(isVisible);
+        }
+
+        public void ExitGame()
+        {
+            Application.Quit();
         }
     }
 }

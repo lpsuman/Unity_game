@@ -65,19 +65,19 @@ namespace Bluaniman.SpaceGame
         public void OnEnable()
         {
             PlayerEventHandler.OnGamePaused += HandleGamePaused;
-            PlayerEventHandler.OnGameUnpaused += HandleGamePaused;
+            PlayerEventHandler.OnGameUnpaused += HandleGameUnpaused;
         }
 
         public void OnDisable()
         {
             PlayerEventHandler.OnGamePaused -= HandleGamePaused;
-            PlayerEventHandler.OnGameUnpaused -= HandleGamePaused;
+            PlayerEventHandler.OnGameUnpaused -= HandleGameUnpaused;
         }
 
         public void OnDestroy()
         {
             PlayerEventHandler.OnGamePaused -= HandleGamePaused;
-            PlayerEventHandler.OnGameUnpaused -= HandleGamePaused;
+            PlayerEventHandler.OnGameUnpaused -= HandleGameUnpaused;
         }
 
         private void BindEsc()
@@ -127,16 +127,15 @@ namespace Bluaniman.SpaceGame
 
         public void HandleGamePaused(string pausingPlayer)
         {
-            pauseButton.enabled = false;
-            unpauseButton.enabled = true;
+            pauseButton.interactable = false;
+            unpauseButton.interactable = true;
             pauseText.SetText($"Game paused by {pausingPlayer}");
         }
 
         public void HandleGameUnpaused(string unpausingPlayer)
         {
-
-            pauseButton.enabled = true;
-            unpauseButton.enabled = false;
+            pauseButton.interactable = true;
+            unpauseButton.interactable = false;
             pauseText.SetText(unpausingPlayer == null ? "Click to pause the game" : $"Game unpaused by {unpausingPlayer}");
         }
     }

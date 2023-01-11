@@ -30,22 +30,36 @@ namespace Bluaniman.SpaceGame.Lobby
             spawnPoints.Remove(transform);
         }
 
-        public override void OnStartServer() => Globals.networkManager.OnServerReadied += SpawnPlayer;
+        //public override void OnStartServer() => Globals.networkManager.OnServerReadied += SpawnPlayer;
 
         [ServerCallback]
+        private void OnEnable()
+        {
+            Globals.networkManager.OnServerReadied += SpawnPlayer;
+        }
 
-        private void OnDestroy() => Globals.networkManager.OnServerReadied -= SpawnPlayer;
+        [ServerCallback]
+        private void OnDisable()
+        {
+            Globals.networkManager.OnServerReadied -= SpawnPlayer;
+        }
+
+        private void OnDestroy()
+        {
+            Globals.networkManager.OnServerReadied -= SpawnPlayer;
+        }
 
         [Server]
         public void SpawnPlayer(NetworkConnectionToClient conn)
         {
             Transform spawnPoint = spawnPoints.ElementAtOrDefault(nextIndex);
-            DebugHandler.CheckAndDebugLog(DebugHandler.OriginShift() != DebugHandler.OriginShiftLoggingMode.Disabled, $"Spawn point {nextIndex} at {spawnPoint.position}.");
             if (spawnPoint == null)
             {
                 DebugHandler.NetworkLog($"Missing spawn point for player {nextIndex}!", this);
                 return;
             }
+            DebugHandler.CheckAndDebugLog(DebugHandler.OriginShift() != DebugHandler.OriginShiftLoggingMode.Disabled, $"Spawn point {nextIndex} at {spawnPoint.position}.");
+
             GameObject playerInstance = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             NetworkServer.Spawn(playerInstance, conn);
             DebugHandler.CheckAndDebugLog(DebugHandler.OriginShift() != DebugHandler.OriginShiftLoggingMode.Disabled, $"Set OS focus for player {nextIndex} to {playerInstance.transform.position}.");

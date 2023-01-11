@@ -42,6 +42,7 @@ namespace Bluaniman.SpaceGame.Network
             return false;
         }
 
+        // temporarily here for ease of access
         public void LeaveGame()
         {
             if (isServer && isClient)

@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
+using Bluaniman.SpaceGame.General;
 using Mirror;
 
 namespace Bluaniman.SpaceGame.Debugging
@@ -9,17 +7,17 @@ namespace Bluaniman.SpaceGame.Debugging
 	{
         private void Start()
 		{
-			if (DebugHandler.ShouldDebug())
+			if (DebugHandler.ShouldDebug() && !Globals.hasRegisteredDbgNetMsgHandlers)
 			{
 				if (isServer)
 				{
 					NetworkServer.RegisterHandler<DebugHandler.DebugNetworkMessage>(DebugHandler.OnDebugNetworkMessageFromClient);
-
 				}
 				if (isClient)
 				{
 					NetworkClient.RegisterHandler<DebugHandler.DebugNetworkMessage>(DebugHandler.OnDebugNetworkMessageFromServer);
 				}
+				Globals.hasRegisteredDbgNetMsgHandlers = true;
 			}
 		}
 	}

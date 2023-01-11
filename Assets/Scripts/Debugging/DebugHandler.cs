@@ -131,7 +131,7 @@ namespace Bluaniman.SpaceGame.Debugging
 		public static void NetworkLog(string debugMsg, NetworkBehaviour networkContext = null)
 		{
             if (!ShouldDebug()) { return; }
-			if (NetworkClient.connection == null || !NetworkClient.connection.isReady)
+			if (NetworkClient.connection == null || !NetworkClient.connection.isReady || !NetworkClient.isConnected)
             {
 				Debug.Log($"{debugMsg}\nNo connection to server.");
 				return;
@@ -143,10 +143,7 @@ namespace Bluaniman.SpaceGame.Debugging
 				isClient = networkContext != null && networkContext.isClient,
 				isOwned = networkContext != null && networkContext.isOwned
 			};
-			if (NetworkClient.isConnected)
-            {
-				NetworkClient.Send(debugNetworkMessage);
-			}
+			NetworkClient.Send(debugNetworkMessage);
 		}
 
 		public static void OnDebugNetworkMessageFromClient(NetworkConnectionToClient conn, DebugNetworkMessage debugNetworkMessage)
